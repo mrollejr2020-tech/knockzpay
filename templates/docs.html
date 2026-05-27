@@ -1,0 +1,532 @@
+{% extends "base.html" %}
+{% block title %}Developer Docs — KnockzPay{% endblock %}
+{% block meta_description %}Build the future of frictionless finance. Integrate the KnockzPay Ed25519 secure payment API
+in minutes. Replace subscriptions with $0.01/call micro-billing.{% endblock %}
+
+{% block content %}
+<div class="docs-layout">
+  <!-- Sidebar -->
+  <aside class="docs-sidebar">
+    <nav class="docs-nav" id="docs-nav">
+      <div class="docs-nav-section">Getting Started</div>
+      <a href="#quickstart" class="active" id="quickstart">Quickstart</a>
+      <a href="#auth">Authentication</a>
+      <a href="#sdk">SDK</a>
+      <div class="docs-nav-section">Core API</div>
+      <a href="#payments">Payments</a>
+      <a href="#streams">Streaming</a>
+      <a href="#verify">Verify</a>
+      <a href="#webhooks">Webhooks</a>
+      <div class="docs-nav-section">Reference</div>
+      <a href="#errors">Errors</a>
+      <a href="#limits">Rate Limits</a>
+      <a href="#idempotency">Idempotency</a>
+    </nav>
+  </aside>
+
+  <!-- Content -->
+  <div class="docs-content">
+    <div id="quickstart">
+      <p class="section-label">Documentation</p>
+      <h1 style="font-size:2.4rem;font-weight:900;letter-spacing:-.03em;margin-bottom:16px">KnockzPay <span
+          class="grad-text">API</span></h1>
+
+
+      <h2 id="quickstart-h">Quickstart</h2>
+      <p>Replace subscriptions with per-action billing in under 10 minutes. First 1,000 calls free.</p>
+
+      <div class="code-block">
+        <span class="code-tag">Install</span>
+        <pre><span class="c-cmt"># JavaScript</span>
+npm install @knockzpay/sdk
+
+<span class="c-cmt"># Python</span>
+pip install knockzpay</pre>
+      </div>
+
+      <div class="code-block">
+        <span class="code-tag">JavaScript</span>
+        <pre><span class="c-kw">import</span> KnockzPay <span class="c-kw">from</span> <span class="c-str">'@knockzpay/sdk'</span>;
+
+<span class="c-kw">const</span> kp = <span class="c-kw">new</span> KnockzPay(<span class="c-str">'kz_live_your_api_key'</span>);
+
+<span class="c-cmt">// Charge user $0.01 for an API call</span>
+<span class="c-kw">const</span> txn = <span class="c-kw">await</span> kp.charge({
+  user:            userId,
+  amount:          <span class="c-num">0.01</span>,
+  currency:        <span class="c-str">'USD'</span>,
+  action:          <span class="c-str">'generate_image'</span>,
+  idempotency_key: requestId
+});
+
+<span class="c-kw">if</span> (txn.status === <span class="c-str">'settled'</span>) {
+  <span class="c-cmt">// Proceed with generation</span>
+}</pre>
+      </div>
+    </div>
+
+    <div id="auth">
+      <h2>Authentication</h2>
+      <p>KnockzPay supports two authentication methods: API Key (simple) and Ed25519 asymmetric signing (hardened
+        production).</p>
+
+      <h3>API Key (Vault-Locked)</h3>
+      <p>KnockzPay uses **Vault-Locked** security. When you generate a key, we hash it instantly. We only store a hidden fingerprint, never the plain key. This provides **Key Immunity** — even if our database leaks, your secret keys stay safe (**Leak-Proof Security**).</p>
+      
+      <div class="code-block">
+        <pre>curl -X POST https://api.knockzpay.com/v1/payments \
+  -H <span class="c-str">"X-API-Key: kz_live_your_key"</span> \
+  -H <span class="c-str">"Content-Type: application/json"</span></pre>
+      </div>
+
+      <h3>Ed25519 Asymmetric (Production)</h3>
+      <p>For high-volume production use. Sign requests with your Ed25519 private key. KnockzPay verifies with your
+        registered public key. Includes replay protection via Redis-backed nonce tracking.</p>
+      <div class="code-block">
+        <pre><span class="c-cmt"># Required headers for asymmetric auth:</span>
+X-Knockz-Merchant-Id: <span class="c-num">12345</span>
+X-Knockz-Signature:   <span class="c-str">&lt;base64-ed25519-sig&gt;</span>
+X-Knockz-Timestamp:   <span class="c-num">1714900000</span>
+X-Knockz-Nonce:       <span class="c-str">&lt;unique-uuid&gt;</span>
+X-Knockz-Key-ID:      <span class="c-str">v1</span></pre>
+      </div>
+    </div>
+
+    <div id="payments">
+      <h2>Payments</h2>
+
+      <h3>Create Payment</h3>
+      <div class="endpoint-badge method-post">POST /v1/payments</div>
+      <p>Settle a payment instantly. Returns <code>settled</code> — no "pending" ambiguity.</p>
+
+      <div class="code-block">
+        <span class="code-tag">Request</span>
+        <pre>{
+  <span class="c-key">"amount"</span>:          <span class="c-num">0.05</span>,
+  <span class="c-key">"currency"</span>:        <span class="c-str">"USD"</span>,
+  <span class="c-key">"recipient_id"</span>:    <span class="c-str">"user_123"</span>,
+  <span class="c-key">"idempotency_key"</span>: <span class="c-str">"abc123"</span>
+}</pre>
+      </div>
+
+      <div class="code-block">
+        <span class="code-tag">Response 201</span>
+        <pre>{
+  <span class="c-key">"status"</span>:         <span class="c-str">"settled"</span>,
+  <span class="c-key">"transaction_id"</span>: <span class="c-str">"txn_1714900000123"</span>,
+  <span class="c-key">"amount"</span>:         <span class="c-num">0.05</span>,
+  <span class="c-key">"currency"</span>:       <span class="c-str">"USD"</span>,
+  <span class="c-key">"verified"</span>:       <span class="c-kw">true</span>,
+  <span class="c-key">"settled_at"</span>:     <span class="c-str">"2026-05-03T14:00:00Z"</span>,
+  <span class="c-key">"proof"</span>: {
+    <span class="c-key">"hash"</span>:      <span class="c-str">"kp_a4f2c9e1"</span>,
+    <span class="c-key">"anchor"</span>:    <span class="c-str">"ledger://knockzpay/mainnet"</span>,
+    <span class="c-key">"immutable"</span>: <span class="c-kw">true</span>
+  }
+}</pre>
+      </div>
+
+      <!-- Live API Sandbox -->
+      <div class="interactive-sandbox"
+        style="margin-top:32px; padding:24px; background:rgba(0,0,0,0.2); border:1px solid var(--purple); border-radius:var(--r2); position: relative; overflow: hidden;">
+        <div
+          style="position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: linear-gradient(90deg, var(--purple), var(--pink));">
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+          <h3 style="margin:0; font-size:1.1rem; display:flex; align-items:center; gap:8px;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path
+                d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z">
+              </path>
+              <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+              <line x1="12" y1="22.08" x2="12" y2="12"></line>
+            </svg>
+            Live Sandbox
+          </h3>
+          <span class="pill pill-green" style="background: rgba(34,197,94,0.1); color: #22c55e;">Interactive</span>
+        </div>
+        <p style="color:var(--muted); font-size:0.9rem; margin-bottom:16px; line-height:1.5;">Test the actual KnockzPay
+          settlement engine. Click send to deduct $0.05 from your dev wallet and instantly receive a cryptographic
+          receipt in real-time.</p>
+
+        <button id="sandbox-btn" class="btn btn-primary" style="width:100%; justify-content:center;">Send Test Request
+          →</button>
+
+        <div id="sandbox-response" class="code-block fade-up"
+          style="display:none; margin-top:16px; border: 1px solid var(--border);">
+          <span class="code-tag" id="sandbox-status">Response</span>
+          <pre id="sandbox-output" style="max-height:300px; overflow-y:auto; font-size:0.85rem;">Loading...</pre>
+        </div>
+      </div>
+
+      <table class="kp-table" style="margin-top:16px">
+        <thead>
+          <tr>
+            <th>Field</th>
+            <th>Type</th>
+            <th>Required</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>amount</code></td>
+            <td>float</td>
+            <td><span class="pill pill-pink">Yes</span></td>
+            <td>Payment amount in USD (min $0.001)</td>
+          </tr>
+          <tr>
+            <td><code>currency</code></td>
+            <td>string</td>
+            <td><span class="pill pill-green">No</span></td>
+            <td>Default: "USD"</td>
+          </tr>
+          <tr>
+            <td><code>recipient_id</code></td>
+            <td>string</td>
+            <td><span class="pill pill-pink">Yes</span></td>
+            <td>KnockzPay user ID or @handle</td>
+          </tr>
+          <tr>
+            <td><code>idempotency_key</code></td>
+            <td>string</td>
+            <td><span class="pill pill-pink">Yes</span></td>
+            <td>Unique key — prevents duplicate charges</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div id="streams">
+      <h2>Streaming Payments</h2>
+      <p>Continuous per-second billing. Perfect for AI sessions, live streams, data feeds. Always bounded by
+        <code>max_spend</code>.</p>
+
+      <h3>Start a Stream</h3>
+      <div class="endpoint-badge method-post">POST /v1/streams/start</div>
+      <div class="code-block">
+        <span class="code-tag">Request</span>
+        <pre>{
+  <span class="c-key">"rate_per_minute"</span>: <span class="c-num">0.02</span>,
+  <span class="c-key">"recipient_id"</span>:   <span class="c-str">"creator_1"</span>,
+  <span class="c-key">"max_spend"</span>:      <span class="c-num">2.00</span>
+}</pre>
+      </div>
+      <div class="code-block">
+        <span class="code-tag">Response 201</span>
+        <pre>{
+  <span class="c-key">"stream_id"</span>:       <span class="c-str">"str_1714900000456"</span>,
+  <span class="c-key">"status"</span>:          <span class="c-str">"active"</span>,
+  <span class="c-key">"rate_per_minute"</span>: <span class="c-num">0.02</span>,
+  <span class="c-key">"max_spend"</span>:       <span class="c-num">2.00</span>,
+  <span class="c-key">"started_at"</span>:      <span class="c-str">"2026-05-03T14:00:00Z"</span>
+}</pre>
+      </div>
+
+      <h3>Stop a Stream</h3>
+      <div class="endpoint-badge method-post">POST /v1/streams/:id/stop</div>
+      <div class="code-block">
+        <span class="code-tag">Response</span>
+        <pre>{
+  <span class="c-key">"stream_id"</span>:     <span class="c-str">"str_1714900000456"</span>,
+  <span class="c-key">"status"</span>:        <span class="c-str">"stopped"</span>,
+  <span class="c-key">"total_charged"</span>: <span class="c-num">0.2400</span>,
+  <span class="c-key">"stopped_at"</span>:    <span class="c-str">"2026-05-03T14:12:00Z"</span>
+}</pre>
+      </div>
+    </div>
+
+    <div id="verify">
+      <h2>Verify (Your Moat)</h2>
+      <p>This is what nobody else has. Every KnockzPay transaction carries a cryptographic proof — queryable forever.
+        Like the browser padlock, but for money.</p>
+
+      <div class="endpoint-badge method-get">GET /v1/transactions/:id/verify</div>
+      <div class="code-block">
+        <span class="code-tag">Response</span>
+        <pre>{
+  <span class="c-key">"verified"</span>:        <span class="c-kw">true</span>,
+  <span class="c-key">"transaction_id"</span>:  <span class="c-str">"txn_1714900000123"</span>,
+  <span class="c-key">"state_hash"</span>:      <span class="c-str">"sha256:4a8f2c9e1d3b7a6f..."</span>,
+  <span class="c-key">"timestamp"</span>:       <span class="c-str">"2026-05-03T14:00:00Z"</span>,
+  <span class="c-key">"anchor_proof"</span>:    <span class="c-str">"merkle://knockzpay/anchor/0x4a8f"</span>,
+  <span class="c-key">"immutable"</span>:       <span class="c-kw">true</span>,
+  <span class="c-key">"status"</span>:          <span class="c-str">"FINAL"</span>
+}</pre>
+      </div>
+    </div>
+
+    <div id="webhooks">
+      <h2>Webhooks</h2>
+      <p>Real-time event delivery with automatic retry and Ed25519 payload signing.</p>
+
+      <h3>Register a Webhook</h3>
+      <div class="endpoint-badge method-post">POST /v1/webhooks</div>
+      <div class="code-block">
+        <pre>{
+  <span class="c-key">"url"</span>:    <span class="c-str">"https://yourapp.com/webhooks/kp"</span>,
+  <span class="c-key">"events"</span>: [<span class="c-str">"payment.settled"</span>, <span class="c-str">"anomaly.detected"</span>]
+}</pre>
+      </div>
+
+      <h3>Event Types</h3>
+      <table class="kp-table">
+        <thead>
+          <tr>
+            <th>Event</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>payment.settled</code></td>
+            <td>Payment finalized and immutable</td>
+          </tr>
+          <tr>
+            <td><code>payment.failed</code></td>
+            <td>Payment could not complete</td>
+          </tr>
+          <tr>
+            <td><code>stream.stopped</code></td>
+            <td>Streaming session ended (cap or manual)</td>
+          </tr>
+          <tr>
+            <td><code>anomaly.detected</code></td>
+            <td>Suspicious activity → auto-freeze triggered</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div id="idempotency">
+      <h2>Idempotency</h2>
+      <p>All mutation endpoints require an <code>idempotency_key</code>. Retry the same request safely — KnockzPay will
+        return the original response without double-charging.</p>
+      <div class="code-block">
+        <pre><span class="c-cmt">// Generate per-request</span>
+<span class="c-kw">const</span> key = <span class="c-str">`charge_${userId}_${Date.now()}`</span>;
+
+<span class="c-kw">const</span> txn = <span class="c-kw">await</span> kp.charge({
+  amount:          <span class="c-num">0.01</span>,
+  recipient_id:    userId,
+  idempotency_key: key   <span class="c-cmt">// safe to retry</span>
+});</pre>
+      </div>
+    </div>
+
+    <div id="errors">
+      <h2>Errors</h2>
+      <table class="kp-table">
+        <thead>
+          <tr>
+            <th>Status</th>
+            <th>Code</th>
+            <th>Meaning</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>400</td>
+            <td>invalid_request</td>
+            <td>Missing or malformed fields</td>
+          </tr>
+          <tr>
+            <td>401</td>
+            <td>unauthorized</td>
+            <td>Invalid or missing API key</td>
+          </tr>
+          <tr>
+            <td>409</td>
+            <td>duplicate_key</td>
+            <td>Idempotency key already used</td>
+          </tr>
+          <tr>
+            <td>429</td>
+            <td>rate_limited</td>
+            <td>Slow down — Retry-After header set</td>
+          </tr>
+          <tr>
+            <td>503</td>
+            <td>gateway_offline</td>
+            <td>Authority unavailable — retry in 30s</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div id="profitable-integrations" style="margin-top:80px;">
+      <p class="section-label" style="color:var(--cyan);">Business Models</p>
+      <h2 style="font-size:2rem; font-weight:900; margin-bottom:24px;">Profitable <span class="grad-text">Integrations</span></h2>
+      <p style="color:var(--muted); margin-bottom:32px; line-height:1.6;">
+        Stop losing money on low-usage users and heavy "power users." Align your revenue with your real-time costs using Sovereign Streams.
+      </p>
+
+      <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:24px;">
+        <!-- AI Inference -->
+        <div class="card" style="border-color:rgba(34,211,238,0.2); background:rgba(34,211,238,0.03);">
+          <div style="display:flex; align-items:center; gap:12px; margin-bottom:16px;">
+            <div style="padding:8px; background:var(--cyan); border-radius:8px; color:#000;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+            </div>
+            <span style="font-weight:800; font-size:1.1rem;">AI Inference</span>
+          </div>
+          <p style="font-size:0.85rem; color:var(--muted); line-height:1.6;">Charge **$0.02/min** for active GPU chat sessions. Capture 100% of casual users who won't pay $20/mo.</p>
+        </div>
+
+        <!-- Premium Media -->
+        <div class="card" style="border-color:rgba(168,85,247,0.2); background:rgba(168,85,247,0.03);">
+          <div style="display:flex; align-items:center; gap:12px; margin-bottom:16px;">
+            <div style="padding:8px; background:var(--purple); border-radius:8px; color:#fff;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg>
+            </div>
+            <span style="font-weight:800; font-size:1.1rem;">Premium Media</span>
+          </div>
+          <p style="font-size:0.85rem; color:var(--muted); line-height:1.6;">Monetize video watch-time at **$0.05/min**. Remove subscription friction and unlock global pay-per-view.</p>
+        </div>
+
+        <!-- Live Consulting -->
+        <div class="card" style="border-color:rgba(16,185,129,0.2); background:rgba(16,185,129,0.03);">
+          <div style="display:flex; align-items:center; gap:12px; margin-bottom:16px;">
+            <div style="padding:8px; background:var(--green); border-radius:8px; color:#000;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+            </div>
+            <span style="font-weight:800; font-size:1.1rem;">Live Consulting</span>
+          </div>
+          <p style="font-size:0.85rem; color:var(--muted); line-height:1.6;">Bill **$1.00/min** for coding help or legal advice. Turn quick questions into high-velocity revenue.</p>
+        </div>
+
+        <!-- Data Feeds -->
+        <div class="card" style="border-color:rgba(236,72,153,0.2); background:rgba(236,72,153,0.03);">
+          <div style="display:flex; align-items:center; gap:12px; margin-bottom:16px;">
+            <div style="padding:8px; background:var(--pink); border-radius:8px; color:#fff;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"/></svg>
+            </div>
+            <span style="font-weight:800; font-size:1.1rem;">Data Feeds</span>
+          </div>
+          <p style="font-size:0.85rem; color:var(--muted); line-height:1.6;">Stream market data for **$0.01/sec**. Capture the high-frequency trader market without monthly overhead.</p>
+        </div>
+      </div>
+    </div>
+
+    <section id="merchant-button" style="margin-top:80px;">
+      <h2 style="font-size:2rem; font-weight:900; margin-bottom:24px;">Merchant <span class="grad-text">"Get
+          Paid"</span> Button</h2>
+      <p style="color:var(--muted); margin-bottom:32px; line-height:1.6;">
+        The fastest way to accept micro-payments on any website. Simply include our SDK and add a data-attribute to any
+        element.
+      </p>
+
+      <div class="card" style="padding:0; overflow:hidden; border-color:var(--border);">
+        <div
+          style="background:rgba(0,0,0,0.3); padding:16px 24px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
+          <span
+            style="font-size:0.8rem; font-family:'JetBrains Mono',monospace; color:var(--muted);">EMBED_CODE.HTML</span>
+        </div>
+        <div style="padding:24px; background:#000;">
+          <pre style="margin:0; color:#fff; font-size:0.9rem; overflow-x:auto;"><code>&lt;!-- 1. Include the SDK --&gt;
+&lt;script src="https://knockzpay.com/static/js/sdk.js"&gt;&lt;/script&gt;
+
+&lt;!-- 2. Create your button --&gt;
+&lt;div 
+  data-knockzpay-amount="0.05" 
+  data-knockzpay-recipient="My Premium App"
+  data-knockzpay-callback="https://myapp.com/success"
+&gt;&lt;/div&gt;</code></pre>
+        </div>
+      </div>
+
+      <div
+        style="margin-top:32px; padding:32px; border:1px dashed var(--border); border-radius:16px; text-align:center;">
+        <p
+          style="font-size:0.8rem; color:var(--muted); margin-bottom:16px; text-transform:uppercase; letter-spacing:0.1em;">
+          Live SDK Preview</p>
+        <div data-knockzpay-amount="0.05" data-knockzpay-recipient="KnockzPay Docs Demo"
+          data-knockzpay-callback="http://localhost:5050/docs"></div>
+      </div>
+    </section>
+
+    <div
+      style="margin-top:60px;padding:32px;background:rgba(124,58,237,.08);border:1px solid rgba(124,58,237,.2);border-radius:var(--r2)">
+      <h3 style="margin-bottom:8px">Ready to replace subscriptions?</h3>
+      <p style="color:var(--muted);font-size:.9rem;margin-bottom:16px">First 1,000 API calls free. No credit card. No
+        monthly fee.</p>
+      <a href="/wallet" class="btn btn-primary">Get API Key →</a>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const btn = document.getElementById('sandbox-btn');
+    const responseBox = document.getElementById('sandbox-response');
+    const output = document.getElementById('sandbox-output');
+    const statusTag = document.getElementById('sandbox-status');
+
+    if (btn) {
+      btn.addEventListener('click', async () => {
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+        btn.disabled = true;
+        btn.textContent = "Processing cryptographic signature...";
+        responseBox.style.display = "block";
+        output.style.color = "var(--muted)";
+        output.textContent = "Negotiating hash-chain state...\nVerifying Ed25519 signature...\nExecuting payment...";
+
+        try {
+          // Artificial delay to show off the "cryptographic processing" text
+          await new Promise(r => setTimeout(r, 800));
+
+          const res = await fetch('/api/v1/payments', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-CSRFToken': csrfToken
+            },
+            body: JSON.stringify({
+              amount: 0.05,
+              currency: "USD",
+              recipient_id: "sandbox_test_user",
+              message: "Live Docs API Test"
+            })
+          });
+
+          if (res.status === 401) {
+            window.location.href = '/login';
+            return;
+          }
+
+          const contentType = res.headers.get("content-type");
+          let data;
+          if (contentType && contentType.includes("application/json")) {
+            data = await res.json();
+          } else {
+            const text = await res.text();
+            data = { error: "Non-JSON response", status: res.status, details: text.substring(0, 100) + "..." };
+          }
+
+          if (res.ok) {
+            statusTag.textContent = "Response 201 (Settled)";
+            statusTag.style.color = "var(--green)";
+          } else {
+            statusTag.textContent = `Error ${res.status}`;
+            statusTag.style.color = "var(--pink)";
+          }
+
+          output.style.color = "var(--text)";
+          output.textContent = JSON.stringify(data, null, 2);
+
+        } catch (err) {
+          statusTag.textContent = "Network Error";
+          statusTag.style.color = "var(--pink)";
+          output.textContent = err.toString();
+        } finally {
+          btn.disabled = false;
+          btn.textContent = "Send Test Request →";
+        }
+      });
+    }
+  });
+</script>
+<script src="{{ url_for('static', filename='js/sdk.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,1065 @@
+{% extends "base.html" %}
+{% block title %}KnockzPay — One Tap. Zero Friction.{% endblock %}
+{% block meta_description %}The internet's micro-payment layer. Replace slow subscriptions with instant, one-tap
+payments for AI, articles, and micro-APIs. No commitment, just pure speed.{% endblock %}
+
+{% block head_extra %}{% endblock %}
+
+{% block content %}
+
+<!-- ── Hero ─────────────────────────────────────────────────────────────── -->
+<section class="hero">
+  <div class="hero-bg">
+    <div class="hero-grid"></div>
+    <div class="hero-orb hero-orb-1"></div>
+    <div class="hero-orb hero-orb-2"></div>
+    <div class="hero-orb hero-orb-3"></div>
+    <!-- Interactive payment globe -->
+    <div id="globe-root"
+      style="position:absolute;inset:0;z-index:0;pointer-events:auto;opacity:0;transition:opacity 2.5s ease-out"></div>
+  </div>
+  <div class="hero-content">
+    <div class="hero-badge">
+      <span class="hero-badge-dot"></span>
+      No subscriptions. No friction. Just tap and it's done.
+    </div>
+    <h1 class="hero-h1">
+      One Tap.<br><span class="grad">Zero Friction.</span>
+    </h1>
+    <p class="hero-sub">
+      Instantly monetize articles, files, photos, videos, podcasts and API's. KnockzPay enables secure, one-tap payments
+      with zero checkout
+      friction.
+    </p>
+    <div class="hero-ctas">
+      <a href="/docs" class="btn btn-primary btn-lg" id="hero-getstarted">Start for Free →</a>
+      <a href="/wallet" class="btn btn-green btn-lg" id="hero-wallet">Try the Wallet</a>
+    </div>
+
+  </div>
+</section>
+
+<!-- ── Live ticker ──────────────────────────────────────────────────────── -->
+<div class="ticker-wrap">
+  <div class="ticker-track" id="ticker-track">
+    <div class="ticker-item"><span class="dot"></span> <span class="ticker-label">🔓 Post unlocked</span> <span
+        class="amt">$0.25</span></div>
+    <div class="ticker-item"><span class="dot"></span> <span class="ticker-label">🤖 AI prompt</span> <span
+        class="amt">$0.01</span></div>
+    <div class="ticker-item"><span class="dot"></span> <span class="ticker-label">💬 Replies revealed</span> <span
+        class="amt">$0.10</span></div>
+    <div class="ticker-item"><span class="dot"></span> <span class="ticker-label">📂 File access</span> <span
+        class="amt">$0.75</span></div>
+    <div class="ticker-item"><span class="dot"></span> <span class="ticker-label">🎨 Image gen</span> <span
+        class="amt">$0.03</span></div>
+    <div class="ticker-item"><span class="dot"></span> <span class="ticker-label">☕ Creator payment</span> <span
+        class="amt">$0.05</span></div>
+    <div class="ticker-item"><span class="dot"></span> <span class="ticker-label">💻 Code snippet</span> <span
+        class="amt">$0.05</span></div>
+    <div class="ticker-item"><span class="dot"></span> <span class="ticker-label">🧠 AI reply</span> <span
+        class="amt">$0.02</span></div>
+    <div class="ticker-item"><span class="dot"></span> <span class="ticker-label">🛠️ Tool access</span> <span
+        class="amt">$0.50</span></div>
+    <div class="ticker-item"><span class="dot"></span> <span class="ticker-label">📄 Article unlock</span> <span
+        class="amt">$0.15</span></div>
+    <div class="ticker-item"><span class="dot"></span> <span class="ticker-label">📺 Stream minute</span> <span
+        class="amt">$0.02</span></div>
+    <div class="ticker-item"><span class="dot"></span> <span class="ticker-label">🔖 Video chapter</span> <span
+        class="amt">$0.25</span></div>
+  </div>
+</div>
+
+<div class="section-full" style="position: relative; overflow: hidden;">
+  <div id="dynamic-labels-container" style="position: absolute; inset: 0; z-index: 0; pointer-events: none;"></div>
+
+  <div class="apng-container" style="position: relative; z-index: 2;">
+    <img id="apng-frame" src="/static/images/critical-thinking1.png" alt="Thinking">
+  </div>
+  <div class="section" style="position: relative; z-index: 2;">
+
+    <p class="section-label center">Why KnockzPay</p>
+    <h2 class="section-title center">Frictionless payments.</h2>
+
+
+    <div class="grid-3">
+      <div class="card fade-up" style="border-color:rgba(124,58,237,.3)">
+        <div class="card-icon" style="background:rgba(124,58,237,.15);color:var(--purple)">
+          <svg viewBox="0 0 24 24" stroke="currentColor">
+            <path d="M7 11V7a5 5 0 0 1 9.9-1" />
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+            <path d="M12 16v3" />
+          </svg>
+        </div>
+        <div class="card-title">Instant Unlock Payments</div>
+        <div class="card-text">Pay $0.25 to reveal a post. $0.10 to view replies. $0.75 for a file or tool. One tap —
+          content appears. No subscription, no account wall, no friction.</div>
+      </div>
+      <div class="card fade-up" style="transition-delay:.1s;border-color:rgba(236,72,153,.2)">
+        <div class="card-icon" style="background:rgba(236,72,153,.15);color:var(--pink)">
+          <svg viewBox="0 0 24 24" stroke="currentColor">
+            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+          </svg>
+        </div>
+        <div class="card-title">One-Tap Payments</div>
+        <div class="card-text">$0.05 to a creator, instantly. Feels like pressing a like button — except money actually
+          moves. No wallet setup, no gas, no confirmation hell.</div>
+      </div>
+      <div class="card fade-up" style="transition-delay:.2s;border-color:rgba(16,185,129,.2)">
+        <div class="card-icon" style="background:rgba(16,185,129,.15);color:var(--green)">
+          <svg viewBox="0 0 24 24" stroke="currentColor">
+            <path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8" />
+            <polyline points="21 3 21 8 16 8" />
+          </svg>
+        </div>
+        <div class="card-title">Auto-Payments (Optional)</div>
+        <div class="card-text">Set a rule: "pay @creator $0.02 every time I read their posts." Runs silently in the
+          background. Users opt in, set a cap, and forget it. Creators earn passively.</div>
+      </div>
+      <div class="card fade-up" style="transition-delay:.3s;border-color:rgba(6,182,212,.2)">
+        <div class="card-icon" style="background:rgba(6,182,212,.15);color:var(--cyan)">
+          <svg viewBox="0 0 24 24" stroke="currentColor">
+            <path d="M12 8V4H8" />
+            <rect x="4" y="8" width="16" height="12" rx="2" />
+            <path d="M2 14h2" />
+            <path d="M20 14h2" />
+            <path d="M15 13v2" />
+            <path d="M9 13v2" />
+          </svg>
+        </div>
+        <div class="card-title">AI Pay-Per-Use</div>
+        <div class="card-text">Charge $0.01 per API call, $0.03 per image gen, $0.10 per prompt. Users already think in
+          tokens — give them billing that matches. Replace subscriptions in 5 lines.</div>
+      </div>
+
+      <div class="card fade-up" style="transition-delay:.4s;border-color:rgba(124,58,237,.2)">
+        <div class="card-icon" style="background:rgba(124,58,237,.15);color:var(--purple)">
+          <svg viewBox="0 0 24 24" stroke="currentColor">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+          </svg>
+        </div>
+        <div class="card-title">Vault-Locked Security</div>
+        <div class="card-text">Your secret keys are hashed instantly. Even we can't see them. **Leak-Proof Security**
+          means your money stays safe, even if a database leaks.</div>
+      </div>
+
+      <div class="card fade-up" style="transition-delay:.5s;border-color:rgba(16,185,129,.2)">
+        <div class="card-icon" style="background:rgba(16,185,129,.15);color:var(--green)">
+          <svg viewBox="0 0 24 24" stroke="currentColor">
+            <path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z" />
+            <line x1="16" y1="8" x2="2" y2="22" />
+            <line x1="17.5" y1="15" x2="9" y2="15" />
+          </svg>
+        </div>
+        <div class="card-title">Zero Gas. No Fees.</div>
+        <div class="card-text"><strong>“This is FREE,”</strong> because it effectively is. Unlike
+          crypto, there are no "gas fees" draining every transaction. You pay the cent, and only the cent.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Spending Guardrails ─────────────────────────────────────────────── -->
+<div
+  style="background:linear-gradient(135deg,rgba(124,58,237,.08),rgba(16,185,129,.05));border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:80px 24px">
+  <div style="max-width:1100px;margin:0 auto">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center">
+      <div>
+        <p class="section-label" style="display:flex;align-items:center;gap:8px">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+            style="width:16px;height:16px;color:var(--purple)">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+          </svg>
+          Spending Guardrails
+        </p>
+        <h2 class="section-title" style="font-size:clamp(1.8rem,3.5vw,2.6rem)">Verifiable safety.<br>Absolute control.
+        </h2>
+        <p style="color:var(--muted);font-size:.95rem;line-height:1.8;margin-bottom:28px">Confidence in continuous
+          payments comes from knowing exactly where you stand. Our multi-layer guardrails ensure that microtransactions
+          remain predictable, transparent, and always under your command.</p>
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div style="display:flex;align-items:flex-start;gap:14px">
+            <div class="list-icon"
+              style="background:rgba(124,58,237,.15);border:1px solid rgba(124,58,237,.25);color:var(--purple)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                <line x1="16" y1="2" x2="16" y2="6" />
+                <line x1="8" y1="2" x2="8" y2="6" />
+                <line x1="3" y1="10" x2="21" y2="10" />
+              </svg>
+            </div>
+            <div>
+              <div style="font-weight:700;font-size:.92rem;margin-bottom:3px">Daily cap — $5 max by default</div>
+              <div style="color:var(--muted);font-size:.83rem">Hard ceiling on daily spend. Configurable. Enforced at
+                the infrastructure layer, not just the UI.</div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:14px">
+            <div class="list-icon"
+              style="background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.2);color:var(--green)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <circle cx="12" cy="12" r="10" />
+                <circle cx="12" cy="12" r="6" />
+                <circle cx="12" cy="12" r="2" />
+              </svg>
+            </div>
+            <div>
+              <div style="font-weight:700;font-size:.92rem;margin-bottom:3px">Per-creator cap</div>
+              <div style="color:var(--muted);font-size:.83rem">Set a separate limit per creator or app. "I'll auto-pay
+                @alex up to $0.50/week." Never exceeded.</div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:14px">
+            <div class="list-icon"
+              style="background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.2);color:var(--yellow)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                <circle cx="12" cy="12" r="3" />
+              </svg>
+            </div>
+            <div>
+              <div style="font-weight:700;font-size:.92rem;margin-bottom:3px">"Are you still watching?" prompts</div>
+              <div style="color:var(--muted);font-size:.83rem">After inactivity, the stream auto-pauses and asks. No
+                silent draining. Ever.</div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:14px">
+            <div class="list-icon"
+              style="background:rgba(6,182,212,.12);border:1px solid rgba(6,182,212,.2);color:var(--cyan)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <line x1="18" y1="20" x2="18" y2="10" />
+                <line x1="12" y1="20" x2="12" y2="4" />
+                <line x1="6" y1="20" x2="6" y2="14" />
+              </svg>
+            </div>
+            <div>
+              <div style="font-weight:700;font-size:.92rem;margin-bottom:3px">Real-time spend meter</div>
+              <div style="color:var(--muted);font-size:.83rem">Always visible. Live balance, running total, cap
+                progress. Users are never in the dark about what's flowing.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="fade-up">
+        <div class="card" style="width:100%;max-width:400px;margin:0 auto">
+          <div
+            style="font-size:.75rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:16px;font-weight:600;display:flex;align-items:center;gap:8px">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              style="width:14px;height:14px;color:var(--cyan)">
+              <line x1="18" y1="20" x2="18" y2="10" />
+              <line x1="12" y1="20" x2="12" y2="4" />
+              <line x1="6" y1="20" x2="6" y2="14" />
+            </svg>
+            Live Spend Meter
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:.82rem;margin-bottom:8px">
+            <span style="color:var(--text);font-weight:600">Today's usage</span>
+            <span style="font-family:'JetBrains Mono',monospace;color:var(--pink)">$0.83 / $5.00</span>
+          </div>
+          <div style="height:10px;background:var(--border);border-radius:5px;overflow:hidden;margin-bottom:20px">
+            <div style="height:100%;width:41.5%;background:var(--grad);border-radius:5px"></div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px">
+            <div
+              style="display:flex;justify-content:space-between;align-items:center;padding:10px 12px;background:var(--surface);border-radius:8px;font-size:.82rem">
+              <span style="color:var(--muted)">@marcus (cap)</span>
+              <span style="font-family:'JetBrains Mono',monospace">$0.12 / $0.50</span>
+            </div>
+            <div
+              style="display:flex;justify-content:space-between;align-items:center;padding:10px 12px;background:var(--surface);border-radius:8px;font-size:.82rem">
+              <span style="color:var(--muted)">GPT wrapper (cap)</span>
+              <span style="font-family:'JetBrains Mono',monospace">$0.41 / $1.00</span>
+            </div>
+            <div
+              style="display:flex;justify-content:space-between;align-items:center;padding:10px 12px;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);border-radius:8px;font-size:.82rem;flex-wrap:wrap;gap:12px">
+              <span style="color:var(--yellow);display:flex;align-items:center;gap:6px">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  style="width:14px;height:14px">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                  <circle cx="12" cy="12" r="3" />
+                </svg>
+                Still watching?
+              </span>
+              <div style="display:flex;gap:8px">
+                <button
+                  style="background:var(--green);color:#fff;border:none;border-radius:6px;padding:4px 10px;font-size:.75rem;cursor:pointer">Yes</button>
+                <button
+                  style="background:var(--surface);color:var(--muted);border:1px solid var(--border);border-radius:6px;padding:4px 10px;font-size:.75rem;cursor:pointer">Stop</button>
+              </div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px">
+            <div class="proof-badge" style="flex:1;justify-content:center">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                style="width:12px;height:12px;margin-right:6px">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+              </svg>
+              Hard cap enforced
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- ── Code demo ──────────────────────────────────────────────────────────→ -->
+<div class="section">
+  <p class="section-label">For Developers</p>
+  <h2 class="section-title">Pay-per-use billing<br>in 5 lines of code.</h2>
+  <p class="section-sub">No complexity. No subscription hell. Just charge what you use, instantly settled,
+    cryptographically verified.</p>
+
+  <div class="api-demo">
+    <div>
+      <div class="tabs tab-container" style="margin-bottom:0">
+        <div class="tabs">
+          <button class="tab active" data-tab="js">JavaScript</button>
+          <button class="tab" data-tab="py">Python</button>
+          <button class="tab" data-tab="curl">cURL</button>
+        </div>
+        <div class="tab-panel active" data-panel="js">
+          <div class="code-block">
+            <span class="code-tag">JS SDK</span>
+            <pre><span class="c-kw">import</span> KnockzPay <span class="c-kw">from</span> <span class="c-str">'@knockzpay/sdk'</span>;
+
+<span class="c-kw">const</span> kp = <span class="c-kw">new</span> KnockzPay(<span class="c-str">'kz_live_your_key'</span>);
+
+<span class="c-cmt">// Charge $0.01 for an API call</span>
+<span class="c-kw">const</span> txn = <span class="c-kw">await</span> kp.charge({
+  user:   userId,
+  amount: <span class="c-num">0.01</span>,
+  action: <span class="c-str">'generate_image'</span>
+});
+
+console.log(txn.status); <span class="c-cmt">// "settled"</span>
+console.log(txn.verified); <span class="c-cmt">// true</span></pre>
+          </div>
+        </div>
+        <div class="tab-panel" data-panel="py">
+          <div class="code-block">
+            <span class="code-tag">Python SDK</span>
+            <pre><span class="c-kw">import</span> knockzpay
+
+kp = knockzpay.Client(<span class="c-str">"kz_live_your_key"</span>)
+
+<span class="c-cmt"># Charge $0.03 per image generation</span>
+txn = kp.payments.create(
+    user_id=user_id,
+    amount=<span class="c-num">0.03</span>,
+    action=<span class="c-str">"generate_image"</span>,
+    idempotency_key=request_id
+)
+
+<span class="c-kw">assert</span> txn[<span class="c-str">"verified"</span>] == <span class="c-kw">True</span></pre>
+          </div>
+        </div>
+        <div class="tab-panel" data-panel="curl">
+          <div class="code-block">
+            <span class="code-tag">cURL</span>
+            <pre>curl -X POST https://api.knockzpay.com/v1/payments \
+  -H <span class="c-str">"X-API-Key: kz_live_your_key"</span> \
+  -H <span class="c-str">"Content-Type: application/json"</span> \
+  -d <span class="c-str">'{
+    "amount": 0.05,
+    "currency": "USD",
+    "recipient_id": "user_123",
+    "idempotency_key": "abc123"
+  }'</span></pre>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top:20px">
+        <h3 style="font-size:.9rem;margin-bottom:8px;color:var(--muted)">▶ Live API demo</h3>
+        <div class="code-block" style="min-height:120px">
+          <span class="code-tag">Response</span>
+          <pre id="demo-output" style="color:var(--muted);font-size:.8rem">Click "Run" to fire a real request →</pre>
+        </div>
+        <button class="btn btn-primary btn-sm" id="run-demo" style="margin-top:12px">▶ Run</button>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:20px">
+      <div class="card" style="border-color:rgba(16,185,129,.25);background:rgba(16,185,129,.04)">
+        <div
+          style="font-size:.8rem;color:var(--green);text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px;font-weight:600">
+          ✓ Instant Settlement</div>
+        <p style="font-size:.88rem;color:var(--muted)">No "pending" state. Money moves the moment the call returns.
+          Deterministic — always the same result.</p>
+      </div>
+      <div class="card" style="border-color:rgba(124,58,237,.25);background:rgba(124,58,237,.04)">
+        <div
+          style="font-size:.8rem;color:var(--purple);text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px;font-weight:600">
+          🔐 Proof on Every TX</div>
+        <p style="font-size:.88rem;color:var(--muted)">Call <code
+            style="font-family:'JetBrains Mono',monospace;font-size:.8rem;color:#C084FC">GET /v1/transactions/:id/verify</code>
+          — get a cryptographic hash, anchor proof, and immutability status. Like the lock icon in browsers, for money.
+        </p>
+      </div>
+      <div class="card" style="border-color:rgba(6,182,212,.25);background:rgba(6,182,212,.04)">
+        <div
+          style="font-size:.8rem;color:var(--cyan);text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px;font-weight:600">
+          ⚡ Streaming API</div>
+        <p style="font-size:.88rem;color:var(--muted)">Start a stream at $0.02/min. It runs continuously. Stop it
+          anytime. Built-in max_spend cap. Perfect for AI sessions, video, live data.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Streaming demo ──────────────────────────────────────────────────── -->
+<div class="section-full">
+  <div class="section center">
+    <p class="section-label center">Streaming Payments</p>
+    <h2 class="section-title center">Visually grounded.<br>Always bounded.</h2>
+    <p class="section-sub center">Continuous payments only work when users feel safe. KnockzPay shows a live meter,
+      enforces a hard cap, and auto-stops on inactivity. Control is never ambiguous.</p>
+
+    <div style="max-width:480px;margin:0 auto">
+      <div class="card" style="text-align:left">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+          <div>
+            <div style="font-size:.78rem;color:var(--muted);margin-bottom:4px">Streaming to @creator</div>
+            <div style="font-size:.9rem;font-weight:600">$0.02 / minute</div>
+          </div>
+          <div style="text-align:right">
+            <div style="font-size:.75rem;color:var(--muted);margin-bottom:4px">Total spent</div>
+            <div style="font-size:1.4rem;font-weight:800;font-family:'JetBrains Mono',monospace;color:var(--pink)"
+              id="stream-total">$0.0000</div>
+          </div>
+        </div>
+        <div style="height:8px;background:var(--border);border-radius:4px;overflow:hidden;margin-bottom:6px">
+          <div id="stream-meter"
+            style="height:100%;width:0%;background:var(--grad);border-radius:4px;transition:width .1s linear"></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:.72rem;color:var(--muted);margin-bottom:16px">
+          <span>$0.00 spent</span><span>🛡️ Hard cap: $5.00/day</span>
+        </div>
+        <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap">
+          <div
+            style="flex:1;background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.2);border-radius:8px;padding:10px 12px;font-size:.78rem">
+            <div style="color:var(--green);font-weight:600;margin-bottom:2px">✓ Reversible</div>
+            <div style="color:var(--muted)">5-sec undo window</div>
+          </div>
+          <div
+            style="flex:1;background:rgba(124,58,237,.08);border:1px solid rgba(124,58,237,.2);border-radius:8px;padding:10px 12px;font-size:.78rem">
+            <div style="color:var(--purple);font-weight:600;margin-bottom:2px">🔒 Bounded</div>
+            <div style="color:var(--muted)">Auto-stops at cap</div>
+          </div>
+          <div
+            style="flex:1;background:rgba(6,182,212,.08);border:1px solid rgba(6,182,212,.2);border-radius:8px;padding:10px 12px;font-size:.78rem">
+            <div style="color:var(--cyan);font-weight:600;margin-bottom:2px">📊 Visible</div>
+            <div style="color:var(--muted)">Live meter always on</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:12px">
+          <button class="btn btn-primary" id="stream-toggle" style="flex:1">▶ Start Stream</button>
+          <div class="proof-badge">✓ Verified</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Pricing teaser ─────────────────────────────────────────────────── -->
+<div class="section center">
+  <p class="section-label center">Pricing</p>
+  <h2 class="section-title center">FREE per action.</h2>
+
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px;max-width:900px;margin:0 auto" class="fade-up">
+    <div class="pricing-card">
+      <div class="pricing-tier">Consumer</div>
+      <div class="pricing-name">Free</div>
+      <div class="pricing-price">$0<span>/month</span></div>
+      <div class="pricing-sub">50 free txns</div>
+      <ul class="pricing-features">
+        <li>Instant wallet</li>
+        <li>Tap-to-unlock content</li>
+        <li>One-tap payments</li>
+        <li>Daily cap + live meter</li>
+      </ul>
+      <a href="/wallet" class="btn btn-ghost" style="width:100%;justify-content:center">Get Wallet</a>
+    </div>
+    <div class="pricing-card featured">
+      <div class="pricing-badge">Most Popular</div>
+      <div class="pricing-tier">Developer</div>
+      <div class="pricing-name">Usage</div>
+      <div class="pricing-price">$0.002<span>/call</span></div>
+      <div class="pricing-sub">First 1,000 calls free</div>
+      <ul class="pricing-features">
+        <li>Full API access</li>
+        <li>Streaming payments</li>
+        <li>Webhook events</li>
+        <li>Verify endpoint</li>
+      </ul>
+      <a href="/docs" class="btn btn-primary" style="width:100%;justify-content:center">Start Building</a>
+    </div>
+    <div class="pricing-card">
+      <div class="pricing-tier">Enterprise</div>
+      <div class="pricing-name">Scale</div>
+      <div class="pricing-price">Custom<span></span></div>
+      <div class="pricing-sub">SLA · Private ledger · Compliance</div>
+      <ul class="pricing-features">
+        <li>Volume discounts</li>
+        <li>SLA guarantees</li>
+        <li>Dedicated support</li>
+        <li>Private ledger instance</li>
+      </ul>
+      <a href="mailto:enterprise@knockzpay.com" class="btn btn-ghost" style="width:100%;justify-content:center">Contact
+        Us</a>
+    </div>
+  </div>
+  <a href="/pricing" style="display:inline-block;margin-top:24px;color:var(--purple);font-size:.9rem">View full pricing
+    table →</a>
+</div>
+
+<!-- ── Trust section ──────────────────────────────────────────────────── -->
+<div style="padding:0 24px 80px">
+  <div style="max-width:1200px;margin:0 auto">
+    <div class="trust-marquee-wrap">
+      <div class="trust-marquee">
+        <!-- Set 1 -->
+        <div class="trust-marquee-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+          </svg>
+          Hash-chained ledger
+        </div>
+        <div class="trust-marquee-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round">
+            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+          </svg>
+          Instant settlement
+        </div>
+        <div class="trust-marquee-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+            <circle cx="12" cy="11" r="3"></circle>
+          </svg>
+          KMS-backed signing
+        </div>
+        <div class="trust-marquee-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round">
+            <path d="M23 4v6h-6"></path>
+            <path d="M1 20v-6h6"></path>
+            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10"></path>
+            <path d="M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+          </svg>
+          Deterministic replay
+        </div>
+        <div class="trust-marquee-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round">
+            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+            <line x1="12" y1="9" x2="12" y2="13"></line>
+            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+          </svg>
+          Emergency lock ready
+        </div>
+        <div class="trust-marquee-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round">
+            <path d="M12 2v6"></path>
+            <path d="M12 18v4"></path>
+            <path d="M4.93 4.93l4.24 4.24"></path>
+            <path d="M14.83 14.83l4.24 4.24"></path>
+            <path d="M2 12h6"></path>
+            <path d="M18 12h4"></path>
+            <path d="M4.93 19.07l4.24-4.24"></path>
+            <path d="M14.83 9.17l4.24-4.24"></path>
+          </svg>
+          Merkle anchors
+        </div>
+        <!-- Set 2 -->
+        <div class="trust-marquee-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+          </svg>
+          Hash-chained ledger
+        </div>
+        <div class="trust-marquee-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round">
+            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+          </svg>
+          Instant settlement
+        </div>
+        <div class="trust-marquee-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+            <circle cx="12" cy="11" r="3"></circle>
+          </svg>
+          KMS-backed signing
+        </div>
+        <div class="trust-marquee-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round">
+            <path d="M23 4v6h-6"></path>
+            <path d="M1 20v-6h6"></path>
+            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10"></path>
+            <path d="M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+          </svg>
+          Deterministic replay
+        </div>
+        <div class="trust-marquee-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round">
+            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+            <line x1="12" y1="9" x2="12" y2="13"></line>
+            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+          </svg>
+          Emergency lock ready
+        </div>
+        <div class="trust-marquee-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round">
+            <path d="M12 2v6"></path>
+            <path d="M12 18v4"></path>
+            <path d="M4.93 4.93l4.24 4.24"></path>
+            <path d="M14.83 14.83l4.24 4.24"></path>
+            <path d="M2 12h6"></path>
+            <path d="M18 12h4"></path>
+            <path d="M4.93 19.07l4.24-4.24"></path>
+            <path d="M14.83 9.17l4.24-4.24"></path>
+          </svg>
+          Merkle anchors
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── CTA ────────────────────────────────────────────────────────────── -->
+<div class="cta-section">
+  <h2>One Tap.<br><span class="grad-text">Zero Friction.</span></h2>
+  <p>Removing friction from every tiny interaction on the web.</p>
+  <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap">
+    <a href="/docs" class="btn btn-primary btn-lg" id="cta-docs">Start Building Free →</a>
+    <a href="/pricing" class="btn btn-ghost btn-lg" id="cta-pricing">See Pricing</a>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script type="module">
+  import * as THREE from 'https://esm.sh/three@0.164.1';
+  import { OrbitControls } from 'https://esm.sh/three@0.164.1/examples/jsm/controls/OrbitControls.js';
+  import { CSS2DRenderer, CSS2DObject } from 'https://esm.sh/three@0.164.1/examples/jsm/renderers/CSS2DRenderer.js';
+
+  // ── Data ────────────────────────────────────────────────────────────────────
+  const CITIES = [
+    { lat: 40.7128, lon: -74.0060, name: 'New York' },
+    { lat: 34.0522, lon: -118.2437, name: 'Los Angeles' },
+    { lat: 19.4326, lon: -99.1332, name: 'Mexico City' },
+    { lat: -23.5505, lon: -46.6333, name: 'São Paulo' },
+    { lat: -34.6037, lon: -58.3816, name: 'Buenos Aires' },
+    { lat: 51.5074, lon: -0.1278, name: 'London' },
+    { lat: 48.8566, lon: 2.3522, name: 'Paris' },
+    { lat: 52.5200, lon: 13.4050, name: 'Berlin' },
+    { lat: 40.4168, lon: -3.7038, name: 'Madrid' },
+    { lat: 41.9028, lon: 12.4964, name: 'Rome' },
+    { lat: 55.7558, lon: 37.6173, name: 'Moscow' },
+    { lat: 41.0082, lon: 28.9784, name: 'Istanbul' },
+    { lat: 30.0444, lon: 31.2357, name: 'Cairo' },
+    { lat: 6.5244, lon: 3.3792, name: 'Lagos' },
+    { lat: -1.2864, lon: 36.8172, name: 'Nairobi' },
+    { lat: -26.2041, lon: 28.0473, name: 'Johannesburg' },
+    { lat: 28.6139, lon: 77.2090, name: 'Delhi' },
+    { lat: 19.0760, lon: 72.8777, name: 'Mumbai' },
+    { lat: 39.9042, lon: 116.4074, name: 'Beijing' },
+    { lat: 31.2304, lon: 121.4737, name: 'Shanghai' },
+    { lat: 35.6895, lon: 139.6917, name: 'Tokyo' },
+    { lat: 37.5665, lon: 126.9780, name: 'Seoul' },
+    { lat: -6.2088, lon: 106.8456, name: 'Jakarta' },
+    { lat: -33.8688, lon: 151.2093, name: 'Sydney' },
+    { lat: -33.9249, lon: 18.4241, name: 'Cape Town' },
+    { lat: -22.9068, lon: -43.1729, name: 'Rio de Janeiro' },
+    { lat: 41.8781, lon: -87.6298, name: 'Chicago' },
+    { lat: 43.6532, lon: -79.3832, name: 'Toronto' },
+    { lat: 49.2827, lon: -123.1207, name: 'Vancouver' },
+    { lat: 37.7749, lon: -122.4194, name: 'San Francisco' }
+  ];
+
+  // ── Helpers ──────────────────────────────────────────────────────────────────
+  function latLon(lat, lon, r = 1.02) {
+    const phi = (90 - lat) * Math.PI / 180;
+    const theta = lon * Math.PI / 180;
+    return new THREE.Vector3(
+      r * Math.sin(phi) * Math.cos(theta),
+      r * Math.cos(phi),
+      r * Math.sin(phi) * Math.sin(theta)
+    );
+  }
+
+  function randomPair() {
+    let a = Math.floor(Math.random() * CITIES.length);
+    let b = a;
+    while (b === a) b = Math.floor(Math.random() * CITIES.length);
+    return [CITIES[a], CITIES[b]];
+  }
+
+  function randomAmount() {
+    // User requested: 0.5 cents, 0.10 cents, 0.15 cents... up to $5
+    const vals = ["0.5¢", "0.10¢", "0.15¢", "0.20¢", "0.25¢", "0.30¢", "0.50¢", "$1.00", "$2.50", "$5.00"];
+    return vals[Math.floor(Math.random() * vals.length)];
+  }
+
+  function arcCurve(sv, ev, height = 0.65) {
+    const mid = sv.clone().add(ev).normalize().multiplyScalar(1.02 + height);
+    return new THREE.CatmullRomCurve3([sv, mid, ev]);
+  }
+
+  function kTexture() {
+    const c = document.createElement('canvas');
+    c.width = c.height = 256;
+    const ctx = c.getContext('2d');
+    ctx.font = 'bold 160px Segoe UI, Arial';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.shadowColor = '#f43f5e'; ctx.shadowBlur = 20;
+    ctx.fillStyle = '#f43f5e'; ctx.fillText('K', 128, 128);
+    ctx.shadowBlur = 0;
+    ctx.fillStyle = '#ffffff'; ctx.fillText('K', 128, 128);
+    return new THREE.CanvasTexture(c);
+  }
+
+  // ── Init ─────────────────────────────────────────────────────────────────────
+  const container = document.getElementById('globe-root');
+  if (!container) { console.error('globe-root not found'); throw new Error(); }
+
+  // WebGL renderer
+  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setSize(container.clientWidth, container.clientHeight);
+  renderer.setClearColor(0x000000, 0);
+  container.appendChild(renderer.domElement);
+
+  // CSS2D renderer (for floating labels)
+  const labelRenderer = new CSS2DRenderer();
+  labelRenderer.setSize(container.clientWidth, container.clientHeight);
+  labelRenderer.domElement.style.position = 'absolute';
+  labelRenderer.domElement.style.top = '0';
+  labelRenderer.domElement.style.left = '0';
+  labelRenderer.domElement.style.pointerEvents = 'none';
+  container.appendChild(labelRenderer.domElement);
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
+  camera.position.set(0, 0.1, 3.5);
+
+  // Controls
+  const controls = new OrbitControls(camera, renderer.domElement);
+  controls.enableZoom = false;
+  controls.enablePan = false;
+  controls.rotateSpeed = 0.8;
+  controls.dampingFactor = 0.05;
+  controls.enableDamping = true;
+
+  // Lights
+  scene.add(new THREE.AmbientLight(0xffffff, 0.5));
+  const ptLight = new THREE.PointLight(0xffffff, 1.2);
+  ptLight.position.set(8, 10, 8);
+  scene.add(ptLight);
+  const dirLight = new THREE.DirectionalLight(0xa855f7, 1.0);
+  dirLight.position.set(5, 3, 5);
+  scene.add(dirLight);
+
+  // ── Stars ────────────────────────────────────────────────────────────────────
+  {
+    const geo = new THREE.BufferGeometry();
+    const pos = [];
+    for (let i = 0; i < 4000; i++) {
+      const theta = Math.random() * Math.PI * 2;
+      const phi = Math.acos(2 * Math.random() - 1);
+      const r = 80 + Math.random() * 70;
+      pos.push(r * Math.sin(phi) * Math.cos(theta), r * Math.cos(phi), r * Math.sin(phi) * Math.sin(theta));
+    }
+    geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+    const starMat = new THREE.PointsMaterial({ color: 0xffffff, size: 0.18, sizeAttenuation: true, transparent: true, opacity: 0.7 });
+    scene.add(new THREE.Points(geo, starMat));
+  }
+
+  // ── Globe group (rotates) ─────────────────────────────────────────────────────
+  const globe = new THREE.Group();
+  scene.add(globe);
+
+  // Earth sphere
+  const earthGeo = new THREE.SphereGeometry(1.02, 128, 128);
+  const earthMat = new THREE.MeshStandardMaterial({ roughness: 0.5, metalness: 0.1, emissive: new THREE.Color(0x111111), emissiveIntensity: 0.15 });
+  const earthMesh = new THREE.Mesh(earthGeo, earthMat);
+  globe.add(earthMesh);
+  globe.scale.set(0.001, 0.001, 0.001); // Initial scale for entrance
+
+  new THREE.TextureLoader().load('/static/images/earth_atmos_2048.jpg', tex => {
+    tex.colorSpace = THREE.SRGBColorSpace;
+    earthMat.map = tex;
+    earthMat.needsUpdate = true;
+  });
+
+  // Purple wireframe overlay
+  const wireMat = new THREE.MeshBasicMaterial({ color: 0xa855f7, wireframe: true, transparent: true, opacity: 0.18 });
+  globe.add(new THREE.Mesh(new THREE.SphereGeometry(1.032, 60, 60), wireMat));
+
+  // Atmospheric glow shell
+  const atmMat = new THREE.MeshBasicMaterial({ color: 0xa855f7, transparent: true, opacity: 0.05, side: THREE.BackSide });
+  globe.add(new THREE.Mesh(new THREE.SphereGeometry(1.05, 64, 64), atmMat));
+
+  // Lat/lon grid lines
+  {
+    const r = 1.038;
+    const lineMat = () => new THREE.LineBasicMaterial({ color: 0xf43f5e, transparent: true, opacity: 0.18 });
+    for (let lat = -60; lat <= 60; lat += 30) {
+      const phi = (90 - lat) * Math.PI / 180;
+      const y = r * Math.cos(phi), rad = r * Math.sin(phi);
+      const pts = [];
+      for (let i = 0; i <= 120; i++) {
+        const t = (i / 120) * Math.PI * 2;
+        pts.push(new THREE.Vector3(rad * Math.cos(t), y, rad * Math.sin(t)));
+      }
+      globe.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), lineMat()));
+    }
+    for (let lon = 0; lon < 360; lon += 30) {
+      const theta = lon * Math.PI / 180;
+      const pts = [];
+      for (let la = -85; la <= 85; la += 5) {
+        const phi = (90 - la) * Math.PI / 180;
+        pts.push(new THREE.Vector3(r * Math.sin(phi) * Math.cos(theta), r * Math.cos(phi), r * Math.sin(phi) * Math.sin(theta)));
+      }
+      globe.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), lineMat()));
+    }
+  }
+
+  // ── Payment trails ────────────────────────────────────────────────────────────
+  const KTex = kTexture();
+  let trails = [];
+
+  function makeLabel(text, color, glowColor) {
+    const div = document.createElement('div');
+    div.style.cssText = `background:${color};backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);padding:4px 14px;border-radius:60px;font-size:11px;font-weight:bold;color:#fff;white-space:nowrap;border:1px solid rgba(255,255,255,.3);box-shadow:0 0 12px ${glowColor};font-family:'Inter',sans-serif;pointer-events:none;transition:opacity 0.6s ease;`;
+    div.textContent = text;
+    return new CSS2DObject(div);
+  }
+
+  function addTrail() {
+    if (trails.length >= 6) return;
+    const [cityA, cityB] = randomPair();
+    const sv = latLon(cityA.lat, cityA.lon);
+    const ev = latLon(cityB.lat, cityB.lon);
+    const curve = arcCurve(sv, ev);
+    const points = curve.getPoints(120);
+
+    const trailGroup = new THREE.Group();
+
+    // Arc line
+    const arcGeo = new THREE.BufferGeometry().setFromPoints(points);
+    const arcMat = new THREE.LineBasicMaterial({ color: 0xf43f5e, transparent: true, opacity: 0.9 });
+    trailGroup.add(new THREE.Line(arcGeo, arcMat));
+
+    // Start/end dot markers
+    const dotGeoS = new THREE.SphereGeometry(0.02, 10, 10);
+    const dotMatS = new THREE.MeshStandardMaterial({ color: 0xa855f7, emissive: 0xa855f7, emissiveIntensity: 0.8 });
+    const dotS = new THREE.Mesh(dotGeoS, dotMatS);
+    dotS.position.copy(sv);
+    trailGroup.add(dotS);
+
+    const dotGeoE = new THREE.SphereGeometry(0.02, 10, 10);
+    const dotMatE = new THREE.MeshStandardMaterial({ color: 0xf43f5e, emissive: 0xf43f5e, emissiveIntensity: 0.8 });
+    const dotE = new THREE.Mesh(dotGeoE, dotMatE);
+    dotE.position.copy(ev);
+    trailGroup.add(dotE);
+
+    // "K" sprite moving along arc
+    const sprite = new THREE.Sprite(new THREE.SpriteMaterial({
+      map: KTex, color: 0xf43f5e, blending: THREE.AdditiveBlending, transparent: true, opacity: 1.0
+    }));
+    sprite.scale.set(0.15, 0.15, 0.15);
+    sprite.position.copy(sv);
+    trailGroup.add(sprite);
+
+    // CSS2D Labels
+    const amount = randomAmount();
+    const labelSent = makeLabel(`💸 ${amount} SENT`, 'rgba(168,85,247,0.5)', 'rgba(168,85,247,0.4)');
+    labelSent.position.copy(sv);
+    trailGroup.add(labelSent);
+
+    const labelRecv = makeLabel(`💰 ${amount} RECEIVED`, 'rgba(244,63,94,0.5)', 'rgba(244,63,94,0.4)');
+    labelRecv.position.copy(ev);
+    trailGroup.add(labelRecv);
+
+    globe.add(trailGroup);
+    trails.push({
+      group: trailGroup,
+      curve,
+      progress: 0,
+      sprite,
+      done: false,
+      labelSent,
+      labelRecv
+    });
+  }
+
+  // Spawn initial trails
+  for (let i = 0; i < 3; i++) setTimeout(addTrail, i * 800);
+  setInterval(addTrail, 6000);
+
+  // ── Resize handler ────────────────────────────────────────────────────────────
+  function onResize() {
+    const w = container.clientWidth, h = container.clientHeight;
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+    renderer.setSize(w, h);
+    labelRenderer.setSize(w, h);
+  }
+  window.addEventListener('resize', onResize);
+
+  // ── Animation loop ────────────────────────────────────────────────────────────
+  const SPEED = 0.0017;
+  function animate() {
+    requestAnimationFrame(animate);
+    globe.rotation.y += 0.002;
+    controls.update();
+
+    // Advance trails
+    for (let i = trails.length - 1; i >= 0; i--) {
+      const t = trails[i];
+      if (t.done) continue;
+
+      t.progress += SPEED;
+      if (t.progress >= 1.0) {
+        t.progress = 1.0;
+        t.done = true;
+
+        // Fade out labels
+        t.labelSent.element.style.opacity = '0';
+        t.labelRecv.element.style.opacity = '0';
+
+        // Remove after fade
+        setTimeout(() => {
+          globe.remove(t.group);
+          // Explicitly dispose geometries and materials
+          t.group.traverse(obj => {
+            if (obj.geometry) obj.geometry.dispose();
+            if (obj.material) {
+              if (Array.isArray(obj.material)) obj.material.forEach(m => m.dispose());
+              else obj.material.dispose();
+            }
+          });
+          trails = trails.filter(tr => tr !== t);
+        }, 650);
+      }
+
+      t.sprite.position.copy(t.curve.getPoint(t.progress));
+    }
+
+    renderer.render(scene, camera);
+    labelRenderer.render(scene, camera);
+  }
+  animate();
+
+  // ── Theme Adaptation ─────────────────────────────────────────────────────────
+  function updateGlobeTheme(theme) {
+    const isLight = (theme || localStorage.getItem('theme')) === 'light';
+    if (earthMesh) earthMesh.visible = true;
+
+    if (earthMat) {
+      if (isLight) {
+        earthMat.emissive.setHex(0x555555);
+        earthMat.emissiveIntensity = 0.7;
+      } else {
+        earthMat.emissive.setHex(0x111111);
+        earthMat.emissiveIntensity = 0.15;
+      }
+    }
+  }
+  window.addEventListener('themeChanged', e => updateGlobeTheme(e.detail.theme));
+  updateGlobeTheme();
+
+  // ── APNG Simulation (Critical Thinking) ──────────────────────────────────────
+  const darkFrames = [
+    '/static/images/critical-thinking1.png',
+    '/static/images/critical-thinking2.png',
+    '/static/images/critical-thinking3.png',
+    '/static/images/critical-thinking4.png',
+    '/static/images/critical-thinking5.png',
+    '/static/images/critical-thinking6.png',
+    '/static/images/critical-thinking7.png',
+    '/static/images/critical-thinking8.png',
+    '/static/images/critical-thinking9.png',
+    '/static/images/critical-thinking10.png',
+    '/static/images/critical-thinking11.png',
+    '/static/images/critical-thinking12.png',
+    '/static/images/critical-thinking13.png'
+  ];
+  const lightFrames = [
+    '/static/images/critical-thinking-light-1.png',
+    '/static/images/critical-thinking-light-2.png',
+    '/static/images/critical-thinking-light-3.png',
+    '/static/images/critical-thinking-light-4.png',
+    '/static/images/critical-thinking-light-5.png',
+    '/static/images/critical-thinking-light-6.png',
+    '/static/images/critical-thinking-light-7.png',
+    '/static/images/critical-thinking-light-8.png',
+    '/static/images/critical-thinking-light-9.png',
+    '/static/images/critical-thinking-light-10.png',
+    '/static/images/critical-thinking-light-11.png',
+    '/static/images/critical-thinking-light-12.png',
+    '/static/images/critical-thinking-light-13.png'
+  ];
+  let currentFrame = 0;
+  let loopCount = 0;
+  const maxLoops = 5;
+  const apngImg = document.getElementById('apng-frame');
+
+  if (apngImg) {
+    const updateFrame = () => {
+      const isLight = document.body.classList.contains('light-mode');
+      const frames = isLight ? lightFrames : darkFrames;
+      apngImg.src = frames[currentFrame];
+    };
+
+    const intervalId = setInterval(() => {
+      currentFrame++;
+      if (currentFrame >= darkFrames.length) {
+        currentFrame = 0;
+        loopCount++;
+      }
+
+      if (loopCount >= maxLoops) {
+        currentFrame = darkFrames.length - 1; // Stay on last frame
+        clearInterval(intervalId);
+      }
+
+      updateFrame();
+    }, 288);
+
+    // Ensure stationary frame updates if theme changes after stopping
+    window.addEventListener('themeChanged', updateFrame);
+  }
+
+  // ── Graceful Entrance ────────────────────────────────────────────────────────
+  setTimeout(() => {
+    const root = document.getElementById('globe-root');
+    if (root) root.style.opacity = '1';
+
+    let p = 0;
+    const entrance = () => {
+      p += 0.015;
+      if (p > 1) p = 1;
+      const s = 1 - Math.pow(1 - p, 4); // Ease out quart
+      globe.scale.set(s, s, s);
+      if (p < 1) requestAnimationFrame(entrance);
+    };
+    entrance();
+  }, 400);
+</script>
+{% endblock %}

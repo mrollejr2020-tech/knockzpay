@@ -1,0 +1,673 @@
+{% extends "base.html" %}
+{% block title %}Wallet — KnockzPay{% endblock %}
+{% block meta_description %}Manage your instant settlement wallet. View real-time transaction feeds, monitor balances,
+and deposit via Lightning or USDC on Solana.{% endblock %}
+
+{% block content %}
+<div style="padding:100px 24px 60px;max-width:1000px;margin:0 auto">
+  <div style="display:grid;grid-template-columns:420px 1fr;gap:40px;align-items:start">
+
+    <!-- Wallet card -->
+    <div class="wallet-wrap" style="max-width:none">
+      <div class="wallet-card">
+        <div class="wallet-header">
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; width:100%;">
+            <div class="wallet-label" style="display:flex;align-items:center;gap:6px">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                style="width:14px;height:14px;color:var(--muted)">
+                <path d="M21 12V7H5a2 2 0 0 1 0-4h14v4" />
+                <path d="M3 5v14a2 2 0 0 0 2 2h16v-5" />
+                <path d="M18 12a2 2 0 0 0 0 4h4v-4Z" />
+              </svg>
+              Available Balance
+            </div>
+            <div id="global-stream-indicator" style="display:none; align-items:center; gap:6px; color:var(--cyan); font-size:0.6rem; font-weight:800; text-transform:uppercase; letter-spacing:0.1em; background:rgba(34,211,238,0.1); padding:4px 8px; border-radius:100px;">
+               <div style="width:6px; height:6px; background:var(--cyan); border-radius:50%; animation: pulse 1s infinite;"></div>
+               Streaming
+            </div>
+          </div>
+          <div class="wallet-balance" id="wallet-balance-display">${{ "%.2f"|format(balance) }}</div>
+          <div class="wallet-bal-sub">✓ Available instantly · Verified</div>
+        </div>
+
+        <div class="wallet-actions">
+          <button class="wallet-action-btn" id="send-btn">
+            <span class="action-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <line x1="22" y1="2" x2="11" y2="13" />
+                <polygon points="22 2 15 22 11 13 2 9 22 2" />
+              </svg>
+            </span>Send
+          </button>
+          <button class="wallet-action-btn" id="receive-btn">
+            <span class="action-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <polyline points="7 7 17 17 17 7" />
+                <polyline points="17 17 7 17" />
+              </svg>
+            </span>Receive
+          </button>
+          <button class="wallet-action-btn" id="stream-btn">
+            <span class="action-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+              </svg>
+            </span>Stream
+          </button>
+          <a href="/deposit" class="wallet-action-btn" style="text-decoration:none">
+            <span class="action-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path d="M12 5v14M5 12h14" />
+              </svg>
+            </span>Deposit
+          </a>
+        </div>
+
+        <div class="wallet-activity">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+          <h2 style="font-size:.9rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em">Recent Activity</h2>
+        </div>
+
+        <!-- Live Session (Dynamic) -->
+        <div id="live-session-card" style="display:none; margin-bottom:16px; border:1px solid var(--cyan); background:rgba(34,211,238,0.05); border-radius:12px; padding:16px; animation: slideIn 0.3s ease-out;">
+           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+              <div style="display:flex; align-items:center; gap:10px;">
+                 <div style="width:32px; height:32px; background:var(--cyan); border-radius:50%; display:flex; align-items:center; justify-content:center; color:#000;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                 </div>
+                 <div>
+                    <div style="font-size:0.85rem; font-weight:800;">Sovereign Stream</div>
+                    <div style="font-size:0.65rem; color:var(--muted);">Live Connection · Merchant</div>
+                 </div>
+              </div>
+              <div id="live-session-total" style="font-size:1.1rem; font-weight:900; font-family:'JetBrains Mono',monospace; color:var(--cyan);">$0.0000</div>
+           </div>
+           <div style="height:2px; background:rgba(34,211,238,0.1); border-radius:1px; overflow:hidden;">
+              <div id="live-session-progress" style="height:100%; width:0%; background:var(--cyan);"></div>
+           </div>
+        </div>
+
+        <div class="activity-feed" id="wallet-feed-container">
+          {% for item in feed %}
+          <div class="feed-item">
+            <div class="feed-avatar {{ item.type }}">
+              {{ item.name[0] }}
+            </div>
+            <div class="feed-info">
+              <div class="feed-name">{{ item.name }}</div>
+              <div class="feed-msg">{{ item.msg }}</div>
+            </div>
+            <div class="feed-right">
+              <div class="feed-amount {{ item.type }}">
+                {% if item.type == 'sent' %}-{% else %}+{% endif %}${{ "%.2f"|format(item.amount) }}
+              </div>
+              <div class="feed-ts">{{ item.ts }}</div>
+              {% if item.verified %}
+              <div class="feed-verify"
+                style="display:flex; align-items:center; gap:4px; color:var(--green); font-size:0.65rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"
+                  style="width:10px;height:10px;">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                </svg>
+                Chain Verified
+              </div>
+              {% endif %}
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+    </div>
+
+    <!-- Info panel -->
+    <div style="display:flex;flex-direction:column;gap:20px;padding-top:8px">
+      <div>
+        <h1 style="font-size:1.8rem;font-weight:800;letter-spacing:-.02em;margin-bottom:8px">KnockzPay <span
+            class="grad-text">Wallet</span></h1>
+        <p style="color:var(--muted);font-size:.95rem;line-height:1.7">Send payments instantly. Every transaction is
+          securely verified and permanently recorded.</p>
+      </div>
+
+      <div class="card" style="border-color:rgba(16,185,129,.2);background:rgba(16,185,129,.04)">
+        <div
+          style="font-size:.78rem;text-transform:uppercase;letter-spacing:.1em;color:var(--green);margin-bottom:12px;font-weight:600;display:flex;align-items:center">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+            style="width:14px;height:14px;margin-right:6px">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+          </svg>
+          Proof Mode
+        </div>
+        <p style="font-size:.85rem;color:var(--muted);margin-bottom:16px">Every transaction has a verifiable permanent
+          receipt. Tap "Verified" on any transaction to see its exact timestamp and status.</p>
+        <div class="proof-badge" style="font-size:.8rem">✓ sha256:4a8f2c9e1d3b·····</div>
+      </div>
+
+      <div class="card">
+        <div
+          style="font-size:.78rem;text-transform:uppercase;letter-spacing:.1em;color:var(--purple);margin-bottom:12px;font-weight:600;display:flex;align-items:center">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+            style="width:14px;height:14px;margin-right:6px">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+          </svg>
+          Spending Guardrails
+        </div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <span style="font-size:.85rem;color:var(--muted)">Daily cap</span>
+            <span style="font-size:.85rem;font-weight:600;font-family:'JetBrains Mono',monospace">$5.00</span>
+          </div>
+          <div style="height:4px;background:var(--border);border-radius:2px">
+            <div
+              style="height:100%;width:{{ (balance/5*100)|int }}%;background:var(--grad);border-radius:2px;max-width:100%">
+            </div>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:.72rem;color:var(--muted)">
+            <span>${{ "%.2f"|format(balance) }} used</span>
+            <span>$5.00 cap</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" id="streaming-card">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+          <div style="font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--cyan);font-weight:700;display:flex;align-items:center">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:12px;height:12px;margin-right:6px">
+              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+            </svg>
+            Session Controller
+          </div>
+        </div>
+        
+        <p style="font-size:.8rem;color:var(--muted);margin-bottom:16px;line-height:1.5;">Initiate a persistent payment stream for per-second services.</p>
+        
+        <div id="stream-setup-view" style="display:flex; gap:10px;">
+          <select class="kp-select" id="stream-rate" style="flex:1; font-size:0.75rem;">
+            <option value="0.01">$0.01/min</option>
+            <option value="0.02" selected>$0.02/min</option>
+            <option value="0.05">$0.05/min</option>
+            <option value="0.10">$0.10/min</option>
+          </select>
+          <button class="btn btn-primary btn-sm" id="stream-toggle-btn" style="white-space:nowrap;">Start Stream</button>
+        </div>
+
+        <div id="stream-active-controls" style="display:none;">
+           <button class="btn btn-ghost btn-sm" id="stream-stop-btn" style="width:100%; border-color:var(--cyan); color:var(--cyan);">Disconnect Session</button>
+        </div>
+      </div>
+
+      <!-- ── Merchant API (Phase 1) ────────────────────────────────────────── -->
+      <div class="card" style="margin-top:24px; border:1px solid var(--purple); background:rgba(168,85,247,0.02)">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:16px;">
+          <h3
+            style="font-size:.78rem;text-transform:uppercase;letter-spacing:.1em;color:var(--purple);font-weight:600;display:flex;align-items:center">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+              style="width:14px;height:14px;margin-right:6px">
+              <path
+                d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3y-3z">
+              </path>
+            </svg>
+            Merchant API
+          </h3>
+          <span class="pill {% if current_user.api_key_blind_index %}pill-green{% else %}pill-pink{% endif %}"
+            style="font-size:0.65rem; letter-spacing:0.05em;">
+            {% if current_user.api_key_blind_index %}VAULT-LOCKED{% else %}NOT SECURED{% endif %}
+          </span>
+        </div>
+
+        <p style="font-size:0.8rem; color:var(--muted); margin-bottom:20px; line-height:1.5;">
+          Connect your application to the internet's micro-payment layer.
+          <span style="color:var(--text); font-weight:600;">Vault-Locked Security</span> ensures your key is hashed
+          instantly, providing **Key Immunity** — your keys stay safe even during database leaks.
+        </p>
+
+        {% if session.get('new_api_key') %}
+        <div
+          style="background:rgba(16,185,129,0.05); border:1px solid rgba(16,185,129,0.3); padding:16px; border-radius:12px; margin-bottom:20px; animation: pulse 2s infinite;">
+          <p
+            style="font-size:0.75rem; color:var(--green); margin-bottom:8px; font-weight:700; text-transform:uppercase; letter-spacing:0.05em;">
+            New Secret API Key</p>
+          <div
+            style="background:rgba(0,0,0,0.2); padding:12px; border-radius:8px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center; gap:10px;">
+            <code id="new-key-value"
+              style="font-family:'JetBrains Mono',monospace; font-size:0.85rem; color:var(--text); word-break:break-all; flex:1;">{{ session.pop('new_api_key') }}</code>
+            <button onclick="copyNewKey()" id="copy-btn" class="btn btn-ghost btn-sm"
+              style="padding:6px 10px; font-size:0.65rem; white-space:nowrap;">Copy</button>
+          </div>
+          <p style="font-size:0.65rem; color:var(--muted);">Copy this now. This is a **Leak-Proof Security** model — we
+            cannot show it to you again.</p>
+        </div>
+        <script>
+          function copyNewKey() {
+            const key = document.getElementById('new-key-value').textContent;
+            const btn = document.getElementById('copy-btn');
+            navigator.clipboard.writeText(key).then(() => {
+              btn.textContent = 'Copied!';
+              btn.style.color = 'var(--green)';
+              setTimeout(() => {
+                btn.textContent = 'Copy';
+                btn.style.color = '';
+              }, 2000);
+            });
+          }
+        </script>
+        {% endif %}
+
+        {% if current_user.api_key_blind_index %}
+        <div
+          style="background:rgba(255,255,255,0.03); border:1px solid var(--border); border-radius:12px; padding:16px; margin-bottom:20px;">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div style="display:flex; align-items:center; gap:10px;">
+              <div
+                style="width:8px; height:8px; background:var(--green); border-radius:50%; box-shadow: 0 0 10px var(--green);">
+              </div>
+              <span style="font-size:0.8rem; font-weight:600;">Live Connection Active</span>
+            </div>
+            <code
+              style="font-family:'JetBrains Mono',monospace; font-size:0.7rem; color:var(--muted);">{{ current_user.api_key_masked or 'kp_****...****' }}</code>
+          </div>
+          <p style="font-size:0.7rem; color:var(--muted); margin-top:6px;">Your apps are ready to receive payments via
+            the Sovereign Gate.</p>
+        </div>
+        {% endif %}
+
+        <form action="/wallet/generate-key" method="POST">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <button type="submit" class="btn btn-ghost btn-sm"
+            style="width:100%; justify-content:center; font-size:0.75rem;">
+            {% if current_user.api_key_blind_index %}Easy Key Update (Rotate){% else %}Generate Merchant Key{% endif %}
+          </button>
+        </form>
+      </div>
+
+      <!-- Phase 1: Sovereign Admin Panel -->
+      <div class="card"
+        style="border:1px solid var({% if is_locked %}--pink{% else %}--border{% endif %}); background:rgba({% if is_locked %}244,63,94{% else %}255,255,255{% endif %},0.05)">
+        <div
+          style="font-size:.78rem;text-transform:uppercase;letter-spacing:.1em;color:var({% if is_locked %}--pink{% else %}--muted{% endif %}); margin-bottom:12px;font-weight:600;display:flex;align-items:center">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+            style="width:14px;height:14px;margin-right:6px">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+          </svg>
+          Sovereign Admin
+        </div>
+
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+          <span style="font-size:0.85rem; color:var(--text)">Treasury Status</span>
+          <span class="pill {% if is_locked %}pill-pink{% else %}pill-green{% endif %}" style="font-size:0.7rem;">{% if
+            is_locked %}EMERGENCY LOCK{% else %}HEALTHY{% endif %}</span>
+        </div>
+
+        <form action="/admin/sovereign/lock" method="POST">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <input type="text" name="reason" placeholder="Lock reason..."
+            style="width:100%; background:rgba(0,0,0,0.2); border:1px solid var(--border); border-radius:4px; padding:6px 10px; color:var(--text); font-size:0.75rem; margin-bottom:8px;">
+          <button type="submit" class="btn {% if is_locked %}btn-ghost{% else %}btn-pink{% endif %} btn-sm"
+            style="width:100%; justify-content:center; font-size:0.75rem;">
+            {% if is_locked %}Unlock Treasury{% else %}Trigger Emergency Lock{% endif %}
+          </button>
+        </form>
+
+        <div style="margin-top:20px; padding-top:16px; border-top:1px dashed var(--border);">
+          <p
+            style="font-size:0.7rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.1em; font-weight:700; margin-bottom:12px;">
+            Raw Ledger State (Admin Only)</p>
+          <div
+            style="background:rgba(0,0,0,0.3); border-radius:8px; padding:12px; font-family:'JetBrains Mono',monospace; font-size:0.65rem; color:var(--text); line-height:1.6;">
+            {% for item in ledger_state %}
+            <div style="display:flex; justify-content:space-between; opacity:{{ 1.0 - (loop.index0 * 0.2) }}">
+              <span>{{ item.id[:8] }}...</span>
+              <span style="color:var(--purple)">→ {{ item.hash[:12] }}...</span>
+            </div>
+            {% endfor %}
+            {% if not ledger_state %}
+            <span style="color:var(--muted)">No transactions anchored.</span>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Send modal ──────────────────────────────────────────────────────── -->
+<div id="send-modal"
+  style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(8px);z-index:500;align-items:center;justify-content:center;padding:24px">
+  <div class="card" style="width:100%;max-width:400px;position:relative">
+    <button id="close-modal"
+      style="position:absolute;top:16px;right:16px;background:none;border:none;color:var(--muted);font-size:1.2rem;cursor:pointer">✕</button>
+    <h2 style="font-size:1.3rem;font-weight:800;margin-bottom:24px">Send Payment</h2>
+
+    <div style="margin-bottom:20px">
+      <label
+        style="font-size:.8rem;color:var(--muted);display:block;margin-bottom:8px;text-transform:uppercase;letter-spacing:.06em">Amount</label>
+      <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
+        <button class="amount-chip btn btn-ghost btn-sm" data-amount="0.01">¢1</button>
+        <button class="amount-chip btn btn-ghost btn-sm" data-amount="0.05">¢5</button>
+        <button class="amount-chip btn btn-primary btn-sm active" data-amount="0.10">¢10</button>
+        <button class="amount-chip btn btn-ghost btn-sm" data-amount="0.25">¢25</button>
+        <button class="amount-chip btn btn-ghost btn-sm" data-amount="0.50">¢50</button>
+        <button class="amount-chip btn btn-ghost btn-sm" data-amount="1.00">$1</button>
+      </div>
+      <input id="custom-amount" type="number" step="0.01" min="0.01" value="0.10"
+        style="width:100%;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:12px 16px;color:var(--text);font-size:1rem;font-family:'JetBrains Mono',monospace">
+    </div>
+
+    <div style="margin-bottom:24px">
+      <label
+        style="font-size:.8rem;color:var(--muted);display:block;margin-bottom:8px;text-transform:uppercase;letter-spacing:.06em">Recipient</label>
+      <input type="text" id="recipient-input" placeholder="@username or paste link"
+        style="width:100%;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:12px 16px;color:var(--text);font-size:.9rem">
+    </div>
+
+    <button class="btn btn-primary" id="confirm-send" style="width:100%;justify-content:center">Send Instantly
+      →</button>
+
+    <!-- Secure Error Report Area -->
+    <div id="error-report"
+      style="display:none; margin-top:20px; padding:16px; background:rgba(244,63,94,0.05); border:1px solid rgba(244,63,94,0.2); border-radius:12px;">
+      <div
+        style="display:flex; align-items:center; gap:8px; margin-bottom:8px; color:var(--pink); font-weight:700; font-size:0.8rem;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" style="width:14px;height:14px;">
+          <circle cx="12" cy="12" r="10" />
+          <line x1="12" y1="8" x2="12" y2="12" />
+          <line x1="12" y1="16" x2="12.01" y2="16" />
+        </svg>
+        SECURE ERROR REPORT
+      </div>
+      <p id="error-msg" style="font-size:0.85rem; color:var(--text); margin-bottom:12px; line-height:1.4;"></p>
+      <div
+        style="display:flex; justify-content:space-between; align-items:center; border-top:1px dashed rgba(244,63,94,0.2); padding-top:12px;">
+        <span style="font-size:0.7rem; color:var(--muted); text-transform:uppercase;">Reason Code</span>
+        <code id="error-code"
+          style="font-family:'JetBrains Mono',monospace; font-size:0.7rem; color:var(--pink); background:rgba(244,63,94,0.1); padding:2px 6px; border-radius:4px;">UNKNOWN</code>
+      </div>
+      <div id="forensic-row" style="display:none; justify-content:space-between; align-items:center; margin-top:8px;">
+        <span style="font-size:0.7rem; color:var(--muted); text-transform:uppercase;">Forensic ID</span>
+        <code id="forensic-id"
+          style="font-family:'JetBrains Mono',monospace; font-size:0.7rem; color:var(--text);">---</code>
+      </div>
+    </div>
+
+    <p id="send-status"
+      style="font-size:.72rem;color:var(--muted);text-align:center;margin-top:12px;transition:all .3s">✓ Verified &amp;
+      permanent · Cannot be altered</p>
+  </div>
+</div>
+
+<!-- ── Receive modal ───────────────────────────────────────────────────── -->
+<div id="receive-modal"
+  style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(8px);z-index:500;align-items:center;justify-content:center;padding:24px">
+  <div class="card" style="width:100%;max-width:400px;position:relative;text-align:center">
+    <button class="close-receive"
+      style="position:absolute;top:16px;right:16px;background:none;border:none;color:var(--muted);font-size:1.2rem;cursor:pointer">✕</button>
+    <h2 style="font-size:1.3rem;font-weight:800;margin-bottom:24px">Receive Payment</h2>
+
+    <div style="background:white; padding:20px; border-radius:12px; display:inline-block; margin-bottom:24px">
+      <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=lightning:knockzpay@zbd.gg" alt="QR"
+        style="width:160px; height:160px;">
+    </div>
+
+    <div style="margin-bottom:20px">
+      <label
+        style="font-size:.8rem;color:var(--muted);display:block;margin-bottom:8px;text-transform:uppercase;letter-spacing:.06em">Your
+        Payment Address</label>
+      <div
+        style="background:var(--surface); border:1px solid var(--border); border-radius:var(--r); padding:12px 16px; color:var(--text); font-size:.85rem; font-family:'JetBrains Mono',monospace; word-break:break-all;">
+        knockzpay@zbd.gg
+      </div>
+    </div>
+
+    <button class="btn btn-ghost btn-sm" onclick="navigator.clipboard.writeText('knockzpay@zbd.gg')"
+      style="width:100%; justify-content:center">Copy Address</button>
+  </div>
+</div>
+
+{% block scripts %}
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const socket = io('/wallet');
+
+    // Modal Elements
+    const sendBtn = document.getElementById('send-btn');
+    const receiveBtn = document.getElementById('receive-btn');
+    const streamBtn = document.getElementById('stream-btn');
+    const sendModal = document.getElementById('send-modal');
+    const receiveModal = document.getElementById('receive-modal');
+
+    // Handlers
+    sendBtn?.addEventListener('click', () => sendModal.style.display = 'flex');
+    receiveBtn?.addEventListener('click', () => receiveModal.style.display = 'flex');
+
+    document.getElementById('close-modal')?.addEventListener('click', () => sendModal.style.display = 'none');
+    document.querySelector('.close-receive')?.addEventListener('click', () => receiveModal.style.display = 'none');
+
+    streamBtn?.addEventListener('click', () => {
+      const card = document.getElementById('streaming-card');
+      card.scrollIntoView({ behavior: 'smooth' });
+      card.style.transition = 'all 0.5s';
+      card.style.boxShadow = '0 0 20px var(--cyan)';
+      setTimeout(() => card.style.boxShadow = '', 1000);
+    });
+
+    // Amount Chips
+    document.querySelectorAll('.amount-chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        document.querySelectorAll('.amount-chip').forEach(c => c.classList.remove('active', 'btn-primary'));
+        document.querySelectorAll('.amount-chip').forEach(c => c.classList.add('btn-ghost'));
+        chip.classList.remove('btn-ghost');
+        chip.classList.add('active', 'btn-primary');
+        document.getElementById('custom-amount').value = chip.dataset.amount;
+      });
+    });
+
+    // --- Streaming Logic ---
+    let isStreaming = false;
+    let streamInterval = null;
+    let totalStreamed = 0;
+    const streamToggleBtn = document.getElementById('stream-toggle-btn');
+    const streamStopBtn = document.getElementById('stream-stop-btn');
+    const globalStreamIndicator = document.getElementById('global-stream-indicator');
+    const liveSessionCard = document.getElementById('live-session-card');
+    const liveSessionTotal = document.getElementById('live-session-total');
+    const liveSessionProgress = document.getElementById('live-session-progress');
+    const streamSetupView = document.getElementById('stream-setup-view');
+    const streamActiveControls = document.getElementById('stream-active-controls');
+    const streamRateSelect = document.getElementById('stream-rate');
+
+    streamToggleBtn?.addEventListener('click', startStream);
+    streamStopBtn?.addEventListener('click', stopStream);
+
+    async function startStream() {
+      isStreaming = true;
+      totalStreamed = 0;
+      const ratePerMin = parseFloat(streamRateSelect.value);
+
+      // UI Transitions
+      globalStreamIndicator.style.display = 'flex';
+      liveSessionCard.style.display = 'block';
+      streamSetupView.style.display = 'none';
+      streamActiveControls.style.display = 'block';
+
+      // Per-second loop
+      streamInterval = setInterval(async () => {
+        totalStreamed += ratePerMin / 60;
+        liveSessionTotal.textContent = `$${totalStreamed.toFixed(4)}`;
+
+        // Progress bar "heartbeat"
+        const cycle = (Date.now() % 2000) / 20; // 0 to 100
+        liveSessionProgress.style.width = `${cycle}%`;
+
+        // Backend sync every 5 seconds (to reduce DB load)
+        if (Math.round(totalStreamed * 1000) % 5 === 0) {
+          try {
+            await fetch('/api/v1/streams/process', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ rate: ratePerMin })
+            });
+          } catch (e) { console.error("Stream sync error", e); }
+        }
+      }, 1000);
+    }
+
+    async function stopStream() {
+      const finalTotal = totalStreamed;
+      isStreaming = false;
+      clearInterval(streamInterval);
+
+      // 1. Clear & UI Reset
+      globalStreamIndicator.style.display = 'none';
+      liveSessionCard.style.display = 'none';
+      streamSetupView.style.display = 'flex';
+      streamActiveControls.style.display = 'none';
+      liveSessionProgress.style.width = '0%';
+
+      // 2. Reconcile & Log
+      if (finalTotal >= 0.01) {
+        try {
+          const res = await fetch('/api/v1/streams/settle', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ total: finalTotal })
+          });
+          
+          if (res.ok) {
+            // 3. Anchoring Feedback
+            injectSettledTransaction(finalTotal);
+            showReconciliationToast(finalTotal);
+            
+            // 4. Final Balance Sync (Perfect Reconciliation)
+            const balRes = await fetch('/api/v1/balance');
+            const balData = await balRes.json();
+            if (balData.balance) {
+               document.getElementById('wallet-balance-display').textContent = '$' + parseFloat(balData.balance).toFixed(2);
+            }
+          }
+        } catch (e) { console.error("Reconciliation error", e); }
+      }
+      
+      // Reset total for the next "Ready" state
+      totalStreamed = 0;
+    }
+
+    function showReconciliationToast(amount) {
+       const toast = document.createElement('div');
+       toast.style = `
+          position: fixed; bottom: 24px; right: 24px; 
+          background: var(--surface); border: 1px solid var(--cyan); 
+          color: var(--cyan); padding: 12px 20px; border-radius: 12px;
+          font-size: 0.8rem; font-weight: 700; z-index: 1000;
+          box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+          animation: slideIn 0.3s ease-out;
+       `;
+       toast.innerHTML = `✓ Session Reconciled: $${amount.toFixed(4)}`;
+       document.body.appendChild(toast);
+       setTimeout(() => {
+          toast.style.animation = 'slideIn 0.3s reverse forwards';
+          setTimeout(() => toast.remove(), 300);
+       }, 3000);
+    }
+
+    function injectSettledTransaction(amount) {
+      const container = document.getElementById('wallet-feed-container');
+      const item = document.createElement('div');
+      item.className = 'feed-item';
+      item.style.animation = 'slideIn 0.4s ease-out';
+      item.innerHTML = `
+        <div class="feed-avatar sent">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+        </div>
+        <div class="feed-info">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start">
+            <div>
+              <div class="feed-name">Settled Stream</div>
+              <div class="feed-msg">Continuous session finalized</div>
+            </div>
+            <div style="text-align:right">
+              <div class="feed-amount">-$${amount.toFixed(2)}</div>
+              <div class="feed-ts">Just now</div>
+              <div class="feed-verify" style="display:flex; align-items:center; gap:4px; color:var(--green); font-size:0.65rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" style="width:10px;height:10px;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                Chain Verified
+              </div>
+            </div>
+          </div>
+        </div>
+     `;
+      container.prepend(item);
+    }
+
+    // Send Payment
+    const confirmBtn = document.getElementById('confirm-send');
+    confirmBtn?.addEventListener('click', async () => {
+      const amount = document.getElementById('custom-amount').value;
+      const recipient = document.getElementById('recipient-input').value || 'Merchant';
+
+      confirmBtn.disabled = true;
+      confirmBtn.textContent = 'Verifying...';
+
+      try {
+        const res = await fetch('/api/v1/payments', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ amount, recipient_id: recipient })
+        });
+        const data = await res.json();
+
+        const errorReport = document.getElementById('error-report');
+        const errorMsg = document.getElementById('error-msg');
+        const errorCode = document.getElementById('error-code');
+        const forensicRow = document.getElementById('forensic-row');
+        const forensicId = document.getElementById('forensic-id');
+
+        errorReport.style.display = 'none'; // Reset
+
+        if (res.ok) {
+          confirmBtn.textContent = 'Success! ✓';
+          confirmBtn.style.background = 'var(--green)';
+          setTimeout(() => {
+            sendModal.style.display = 'none';
+            confirmBtn.disabled = false;
+            confirmBtn.textContent = 'Send Instantly →';
+            confirmBtn.style.background = '';
+          }, 1500);
+        } else {
+          // Obsidian Error Handling
+          errorReport.style.display = 'block';
+          errorMsg.textContent = data.error || 'Transaction rejected by Sovereign Gate.';
+          errorCode.textContent = data.code || 'ERR_UNKNOWN';
+
+          if (data.forensic_id) {
+            forensicRow.style.display = 'flex';
+            forensicId.textContent = data.forensic_id;
+          } else {
+            forensicRow.style.display = 'none';
+          }
+
+          confirmBtn.disabled = false;
+          confirmBtn.textContent = 'Retry Settlement';
+          confirmBtn.style.background = 'var(--pink)';
+        }
+      } catch (e) {
+        document.getElementById('error-report').style.display = 'block';
+        document.getElementById('error-msg').textContent = 'Network connection interrupted. State preservation active.';
+        document.getElementById('error-code').textContent = 'ERR_NETWORK';
+
+        confirmBtn.disabled = false;
+        confirmBtn.textContent = 'Retry Settlement';
+      }
+    });
+
+    socket.on('balance_update', (data) => {
+      const balanceDisplay = document.getElementById('wallet-balance-display');
+      if (balanceDisplay) {
+        balanceDisplay.textContent = '$' + parseFloat(data.balance).toFixed(2);
+      }
+    });
+  });
+</script>
+{% endblock %}
+{% endblock %}

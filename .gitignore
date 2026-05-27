@@ -1,0 +1,20 @@
+# Ignore everything by default
+/*
+
+# Allow gitignore and requirements
+!/.gitignore
+!/requirements.txt
+
+# Ignore static assets
+/static/
+
+# Allow templates folder
+!/templates/
+/templates/*
+
+# Allow specific templates
+!/templates/base.html
+!/templates/index.html
+!/templates/about.html
+!/templates/docs.html
+!/templates/wallet.html

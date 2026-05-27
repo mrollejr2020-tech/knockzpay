@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block title %}About — KnockzPay{% endblock %}
+
+{% block content %}
+<div style="padding:100px 24px 80px;max-width:900px;margin:0 auto">
+  <p class="section-label">About</p>
+  <h1 class="section-title" style="font-size:clamp(2.2rem,5vw,3.5rem)">Powering the<br><span
+      class="grad-text">fractional economy.</span></h1>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:60px;margin-top:60px;align-items:start">
+    <div>
+      <p style="color:var(--muted);font-size:1.05rem;line-height:1.8;margin-bottom:24px">We eradicate the mental
+        friction of traditional payments, transforming sub-cent transfers into an effortless, one-tap experience.</p>
+      <p style="color:var(--muted);font-size:1.05rem;line-height:1.8;margin-bottom:24px"><strong
+          style="color:var(--text)">KnockzPay provides the ultimate microeconomic foundation for the digital
+          world.</strong></p>
+      <p style="color:var(--muted);font-size:1.05rem;line-height:1.8">Built on an independent, secure ledger with absolute verification for every single transaction.</p>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:20px">
+      <div class="card">
+        <div class="card-icon" style="background:rgba(124,58,237,.15);color:var(--purple)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <circle cx="12" cy="12" r="10" />
+            <circle cx="12" cy="12" r="6" />
+            <circle cx="12" cy="12" r="2" />
+          </svg>
+        </div>
+        <div class="card-title">Mission</div>
+        <div class="card-text">"Pay cents instantly for anything on the internet — no friction, no commitment."</div>
+      </div>
+      <div class="card">
+        <div class="card-icon" style="background:rgba(16,185,129,.15);color:var(--green)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <rect x="2" y="20" width="20" height="2" />
+            <rect x="9" y="11" width="6" height="9" />
+            <path d="M5 20v-5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v5" />
+            <rect x="8" y="2" width="8" height="11" />
+          </svg>
+        </div>
+        <div class="card-title">Leak-Proof Security</div>
+        <div class="card-text">Built on a secure, vault-locked engine. Your keys are protected by **Key Immunity**, meaning they are hashed instantly and never stored in plain text. Even if our database leaks, your security stays solid.</div>
+      </div>
+      <div class="card">
+        <div class="card-icon" style="background:rgba(6,182,212,.15);color:var(--cyan)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <circle cx="12" cy="12" r="10" />
+            <line x1="2" y1="12" x2="22" y2="12" />
+            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+          </svg>
+        </div>
+        <div class="card-title">The Vision</div>
+        <div class="card-text">KnockzPay is redefining the economics of the internet by commoditizing micro
+          transactions. Every AI call, every content piece, every API endpoint — now effortlessly billable in
+          milliseconds.</div>
+      </div>
+    </div>
+  </div>
+
+  <div
+    style="margin-top:80px;padding:48px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);text-align:center"
+    class="fade-up">
+    <h2 style="font-size:1.8rem;font-weight:800;margin-bottom:16px">Join the <span class="grad-text">microtransaction
+        revolution.</span></h2>
+    <p style="color:var(--muted);margin-bottom:28px">Building the foundation for the next generation of internet value
+      exchange.</p>
+    <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap">
+      <a href="/wallet" class="btn btn-primary">Get the Wallet</a>
+      <a href="/docs" class="btn btn-ghost">Build with the API</a>
+    </div>
+  </div>
+</div>
+{% endblock %}
