@@ -429,6 +429,153 @@ X-Knockz-Key-ID:      <span class="c-str">v1</span></pre>
           <p style="font-size:0.85rem; color:var(--muted); line-height:1.6;">Monetize AI generation, data lookup, and micro-APIs. Charge <strong>$0.01 per query</strong> using simple header-based billing or SDKs.</p>
         </div>
       </div>
+    <div id="photo-case-study" style="margin-top:56px; padding:32px; background:rgba(6,182,212,0.03); border:1px solid rgba(6,182,212,0.15); border-radius:var(--r2);">
+      <h3 style="font-size:1.4rem; font-weight:800; color:#06b6d4; margin-bottom:8px; display:flex; align-items:center; gap:8px;">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+        Deep Dive: Secure Photo Paywalls
+      </h3>
+      <p style="color:var(--muted); font-size:0.9rem; margin-bottom:24px; line-height:1.6;">
+        Standard client-side watermarks are easily bypassed. For robust production systems, implement an end-to-end encrypted pipeline using S3 and temporary signed decryption URLs.
+      </p>
+
+      <!-- Monetization Models -->
+      <h4 style="font-size:1rem; font-weight:700; margin-bottom:12px; color:var(--text);">Photo Monetization Models</h4>
+      <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:16px; margin-bottom:32px;">
+        <div style="background:rgba(0,0,0,0.2); padding:16px; border-radius:8px; border:1px solid var(--border);">
+          <div style="font-weight:700; font-size:0.9rem; color:#06b6d4; margin-bottom:4px;">Pay-Per-Photo</div>
+          <p style="font-size:0.75rem; color:var(--muted); margin:0;">$1.00 – $50.00 direct unlocks for single high-res stock photos, designs, or digital artwork.</p>
+        </div>
+        <div style="background:rgba(0,0,0,0.2); padding:16px; border-radius:8px; border:1px solid var(--border);">
+          <div style="font-weight:700; font-size:0.9rem; color:#06b6d4; margin-bottom:4px;">Creator Subscriptions</div>
+          <p style="font-size:0.75rem; color:var(--muted); margin:0;">Monthly access to a creator's entire private portfolio gallery, powered by recurring streams.</p>
+        </div>
+        <div style="background:rgba(0,0,0,0.2); padding:16px; border-radius:8px; border:1px solid var(--border);">
+          <div style="font-weight:700; font-size:0.9rem; color:#06b6d4; margin-bottom:4px;">High-Margin Tips</div>
+          <p style="font-size:0.75rem; color:var(--muted); margin:0;">Support creator buttons built directly into photo lightboxes allowing voluntary tipping.</p>
+        </div>
+        <div style="background:rgba(0,0,0,0.2); padding:16px; border-radius:8px; border:1px solid var(--border);">
+          <div style="font-weight:700; font-size:0.9rem; color:#06b6d4; margin-bottom:4px;">Premium Tiers</div>
+          <p style="font-size:0.75rem; color:var(--muted); margin:0;">Offer multi-tier unlocks: web resolution ($0.10), high-res ($1.00), or print-ready TIFF ($5.00).</p>
+        </div>
+      </div>
+
+      <!-- Architectural Flow Diagram -->
+      <h4 style="font-size:1rem; font-weight:700; margin-bottom:16px; color:var(--text);">Example Production Flow</h4>
+      <div class="flow-diagram" style="background:#09090b; padding:20px; border-radius:12px; border:1px solid var(--border); margin-bottom:32px; overflow-x:auto;">
+        <div style="display:flex; justify-content:space-between; align-items:center; min-width:640px; font-size:0.8rem; font-family:'JetBrains Mono', monospace;">
+          <div style="text-align:center; padding:12px; background:rgba(255,255,255,0.05); border:1px solid var(--border); border-radius:6px; width:100px;">
+            <div style="color:var(--muted); margin-bottom:4px; font-size:0.7rem;">CREATOR</div>
+            Upload Image
+          </div>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+          <div style="text-align:center; padding:12px; background:rgba(255,255,255,0.05); border:1px solid var(--border); border-radius:6px; width:120px;">
+            <div style="color:#a855f7; margin-bottom:4px; font-size:0.7rem;">BACKEND</div>
+            Encrypts File & Stores in S3
+          </div>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+          <div style="text-align:center; padding:12px; background:rgba(255,255,255,0.05); border:1px solid var(--border); border-radius:6px; width:120px;">
+            <div style="color:#06b6d4; margin-bottom:4px; font-size:0.7rem;">PUBLIC VIEW</div>
+            Watermarked Preview Rendered
+          </div>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+          <div style="text-align:center; padding:12px; background:rgba(34,197,94,0.1); border:1px solid #22c55e; border-radius:6px; width:120px;">
+            <div style="color:#22c55e; margin-bottom:4px; font-size:0.7rem;">KNOCKZPAY</div>
+            One-Tap Payment Succeeds
+          </div>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+          <div style="text-align:center; padding:12px; background:rgba(255,255,255,0.05); border:1px solid var(--border); border-radius:6px; width:120px;">
+            <div style="color:#ec4899; margin-bottom:4px; font-size:0.7rem;">ACCESS</div>
+            Decrypts & Renders Full Image
+          </div>
+        </div>
+      </div>
+
+      <!-- Code Showcase Tabs -->
+      <div style="display:flex; gap:8px; margin-bottom:16px; border-bottom:1px solid var(--border); padding-bottom:12px;">
+        <button class="btn btn-ghost btn-sm tab-btn active" data-tab="tab-frontend" onclick="switchCaseTab('tab-frontend')">Client Frontend</button>
+        <button class="btn btn-ghost btn-sm tab-btn" data-tab="tab-backend" onclick="switchCaseTab('tab-backend')">Backend Controller</button>
+      </div>
+
+      <!-- Frontend Tab Content -->
+      <div id="tab-frontend" class="case-tab-content">
+        <div class="code-block" style="margin:0;">
+          <span class="code-tag">HTML + JS</span>
+          <pre><code>&lt;!-- Public Watermarked Preview --&gt;
+&lt;div class="image-wrapper" style="position:relative; width:100%; max-width:600px;"&gt;
+  &lt;img id="premium-photo" src="/api/photo/preview/photo_abc" style="width:100%;" /&gt;
+  &lt;div id="paywall-overlay" style="position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; background:rgba(0,0,0,0.4);"&gt;
+    &lt;button id="unlock-btn" class="btn btn-primary"&gt;Unlock High-Res Photo ($5.00)&lt;/button&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;script&gt;
+  document.getElementById('unlock-btn').addEventListener('click', async () => {
+    // 1. Request KnockzPay Payment
+    const receipt = await KnockzPay.requestPayment({
+      amount: 5.00,
+      recipient: "photo_creator_id",
+      description: "Unlock High-Res Photo: Sunset Horizon"
+    });
+
+    if (receipt.status === 'settled') {
+      // 2. Fetch secure decrypt URL from backend using transaction ID
+      const res = await fetch('/api/photo/decrypt', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ txn_id: receipt.transaction_id })
+      });
+      const data = await res.json();
+
+      if (data.decrypt_url) {
+        // 3. Swap source and remove paywall overlay
+        document.getElementById('premium-photo').src = data.decrypt_url;
+        document.getElementById('paywall-overlay').remove();
+      }
+    }
+  });
+&lt;/script&gt;</code></pre>
+        </div>
+      </div>
+
+      <!-- Backend Tab Content -->
+      <div id="tab-backend" class="case-tab-content" style="display:none;">
+        <div class="code-block" style="margin:0;">
+          <span class="code-tag">PYTHON / BOTO3</span>
+          <pre><code>import boto3
+from flask import jsonify, request
+from cryptography.fernet import Fernet
+import knockzpay
+
+s3_client = boto3.client('s3')
+kp = knockzpay.Client(api_key="kz_live_...")
+
+@app.route('/api/photo/decrypt', methods=['POST'])
+def decrypt_photo():
+    data = request.get_json()
+    txn_id = data.get('txn_id')
+
+    # 1. Verify transaction with KnockzPay
+    verification = kp.verify_transaction(txn_id)
+    if not verification.verified or verification.amount &lt; 5.00:
+        return jsonify({"error": "Payment required"}), 402
+
+    # 2. Retrieve encrypted asset from S3
+    encrypted_obj = s3_client.get_object(Bucket="knockzpay-vault", Key="photo_abc.enc")
+    encrypted_data = encrypted_obj['Body'].read()
+
+    # 3. Decrypt file using key mapped to entitlement
+    fernet_key = get_encryption_key("photo_abc") # retrieved securely
+    cipher = Fernet(fernet_key)
+    decrypted_data = cipher.decrypt(encrypted_data)
+
+    # 4. Generate temporary signed URL or serve stream
+    temp_url = save_temporary_decrypted_asset(decrypted_data, expiration=300)
+    
+    return jsonify({
+        "decrypt_url": temp_url
+    })</code></pre>
+        </div>
+      </div>
     </div>
 
     <section id="merchant-button" style="margin-top:80px;">
@@ -479,6 +626,14 @@ X-Knockz-Key-ID:      <span class="c-str">v1</span></pre>
 </div>
 
 <script>
+  function switchCaseTab(tabId) {
+    document.querySelectorAll('.case-tab-content').forEach(el => el.style.display = 'none');
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+    
+    document.getElementById(tabId).style.display = 'block';
+    document.querySelector(`[data-tab="${tabId}"]`).classList.add('active');
+  }
+
   document.addEventListener('DOMContentLoaded', () => {
     const btn = document.getElementById('sandbox-btn');
     const responseBox = document.getElementById('sandbox-response');
